@@ -163,7 +163,7 @@ Select	cust.CustomerID,
 from Sales.Customers cust
 Cross apply	(
 				Select distinct top 2 
-						ord.CustomerID		     as CustomerID,
+						ord.OrderID			     as OrderID,
 						ordLine.StockItemID		 as StockItemID,	
 						ordLine.Description		 as Description,	
 						ordLine.UnitPrice		 as Price
@@ -173,14 +173,9 @@ Cross apply	(
 				order by ordLine.UnitPrice DESC
 			) tablProduct
 Cross apply	(
-				Select 	ord.CustomerID		     as CustomerID,
-						ordLine.StockItemID		 as StockItemID,	
-						ord.OrderDate			 as OrderDate
+				Select ord.OrderDate	as OrderDate
 				from  Sales.Orders ord
-				 join Sales.OrderLines ordLine on ordLine.OrderID = ord.OrderID
-				Where ord.CustomerID = tablProduct.CustomerID 
-				  and ordLine.StockItemID = tablProduct.StockItemID
-				  and ordLine.UnitPrice = tablProduct.Price
+				Where ord.OrderID = tablProduct.OrderID 
 			) tablOrd
 order by cust.CustomerName, tablProduct.Price DESC, tablOrd.OrderDate
 
@@ -194,14 +189,12 @@ from Sales.Customers cust
 Cross apply	(
 				Select distinct top 2 
 						ordLine.StockItemID		 as StockItemID,	
-						ordLine.UnitPrice		 as Price
+						ordLine.UnitPrice		 as Price,
+						ord.OrderID				 as OrderID
 				from  Sales.Orders ord
 				 join Sales.OrderLines ordLine on ordLine.OrderID = ord.OrderID
 				Where ord.CustomerID = cust.CustomerID
 				order by ordLine.UnitPrice DESC
 			) tablProduct
-join Sales.Orders ord		  on ord.CustomerID = cust.CustomerID
-join Sales.OrderLines ordLine on ordLine.OrderID = ord.OrderID
-								and tablProduct.StockItemID = ordLine.StockItemID
-								and tablProduct.Price = ordLine.UnitPrice 
+join Sales.Orders ord		  on tablProduct.OrderID = ord.OrderID 
 order by cust.CustomerName, tablProduct.Price DESC, ord.OrderDate 
