@@ -180,6 +180,7 @@ Cross apply	(
 				 join Sales.OrderLines ordLine on ordLine.OrderID = ord.OrderID
 				Where ord.CustomerID = tablProduct.CustomerID 
 				  and ordLine.StockItemID = tablProduct.StockItemID
+				  and ordLine.UnitPrice = tablProduct.Price
 			) tablOrd
 order by cust.CustomerName, tablProduct.Price DESC, tablOrd.OrderDate
 
@@ -202,4 +203,5 @@ Cross apply	(
 join Sales.Orders ord		  on ord.CustomerID = cust.CustomerID
 join Sales.OrderLines ordLine on ordLine.OrderID = ord.OrderID
 								and tablProduct.StockItemID = ordLine.StockItemID
+								and tablProduct.Price = ordLine.UnitPrice 
 order by cust.CustomerName, tablProduct.Price DESC, ord.OrderDate 
