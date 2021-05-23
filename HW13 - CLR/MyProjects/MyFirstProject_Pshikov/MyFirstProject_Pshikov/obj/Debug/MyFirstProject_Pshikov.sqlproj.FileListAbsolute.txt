@@ -1,0 +1,5 @@
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW13 - CLR\MyProjects\MyFirstProject_Pshikov\MyFirstProject_Pshikov\bin\Debug\MyFirstProject_Pshikov.dacpac
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW13 - CLR\MyProjects\MyFirstProject_Pshikov\MyFirstProject_Pshikov\bin\Debug\MyFirstProject_Pshikov.dll
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW13 - CLR\MyProjects\MyFirstProject_Pshikov\MyFirstProject_Pshikov\bin\Debug\MyFirstProject_Pshikov.pdb
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW13 - CLR\MyProjects\MyFirstProject_Pshikov\MyFirstProject_Pshikov\obj\Debug\MyFirstProject_Pshikov.dll
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW13 - CLR\MyProjects\MyFirstProject_Pshikov\MyFirstProject_Pshikov\obj\Debug\MyFirstProject_Pshikov.pdb
