@@ -4,11 +4,13 @@ CREATE DATABASE [Project_Sbyt]
  CONTAINMENT = NONE
  ON  PRIMARY 
 ( NAME = Sbyt, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt.mdf' , 
+--( NAME = Sbyt, FILENAME = N'D:\Sbyt.mdf' , 
 	SIZE = 8MB , 
 	MAXSIZE = UNLIMITED, 
 	FILEGROWTH = 30MB )
  LOG ON 
 ( NAME = Sbyt_log, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt_log.ldf' , 
+--( NAME = Sbyt_log, FILENAME = N'd:\Sbyt_log.ldf' , 
 	SIZE = 8MB , 
 	MAXSIZE = UNLIMITED , 
 	FILEGROWTH = 30MB )
@@ -33,16 +35,16 @@ GO
 --Создаем таблицы
 CREATE TABLE Sbyt.[Договор] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	Номер varchar(100) NOT NULL,
+	Номер nvarchar(100) NOT NULL,
 	Плательщик int NOT NULL,
 	Грузополучатель int NOT NULL,
-	Начало_договора datetime2 NOT NULL,
-	Окончание_договора datetime2 NOT NULL DEFAULT '20451231',
+	Начало_договора date NOT NULL,
+	Окончание_договора date NOT NULL DEFAULT '20451231',
 	Тип_договора int NOT NULL,
-	Категория int,
-	Отрасль int,
-	Бюджет int,
-	Примечение varchar(255),
+	Категория_ИД int,
+	Отрасль_ИД int,
+	Бюджет_ИД int,
+	Примечение nvarchar(1000),
   CONSTRAINT [PK_ДОГОВОР] PRIMARY KEY CLUSTERED
   (
   [Row_ID] ASC
@@ -56,8 +58,8 @@ CREATE TABLE Sbyt.[Классификаторы] (
 	Папки int,
 	Папки_Add tinyint NOT NULL,
 	Код int,
-	Название varchar(255),
-	Примечание varchar(255),
+	Название nvarchar(1000),
+	Примечание nvarchar(1000),
   CONSTRAINT [PK_КЛАССИФИКАТОРЫ] PRIMARY KEY CLUSTERED
   (
   [Row_ID] ASC
@@ -69,7 +71,7 @@ CREATE TABLE Sbyt.[Типы_классификатора] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
 	Папки int,
 	Папки_Add tinyint NOT NULL,
-	Название varchar(255) NOT NULL,
+	Название nvarchar(500) NOT NULL,
   CONSTRAINT [PK_ТИПЫ_КЛАССИФИКАТОРА] PRIMARY KEY CLUSTERED
   (
   [Row_ID] ASC
@@ -86,7 +88,7 @@ CREATE TABLE Sbyt.[Свойства] (
 	ДатНач datetime2 NOT NULL,
 	ДатКнц datetime2 NOT NULL DEFAULT '20451231',
 	Значение int NOT NULL,
-	Примечание varchar(255) NOT NULL,
+	Примечание nvarchar(1000) NOT NULL,
   CONSTRAINT [PK_СВОЙСТВА] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -96,17 +98,17 @@ CREATE TABLE Sbyt.[Свойства] (
 GO
 CREATE TABLE Sbyt.[Организации] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	ИНН varchar(12) NOT NULL,
-	КПП varchar(10),
-	ОРГН varchar(100),
-	Название varchar(255) NOT NULL,
-	Наименование varchar(255) NOT NULL,
+	ИНН nvarchar(24) NOT NULL,
+	КПП nvarchar(20),
+	ОРГН nvarchar(30),
+	Название nvarchar(500) NOT NULL,
+	Наименование nvarchar(1000) NOT NULL,
 	Вид_организации tinyint NOT NULL,
-	Юридический_адрес varchar(255) NOT NULL,
-	Фактический_адрес varchar(255) NOT NULL,
-	Телефоны varchar(100),
-	Емайл varchar(100),
-	Примечание varchar(255),
+	Юридический_адрес nvarchar(1000) NOT NULL,
+	Фактический_адрес nvarchar(1000) NOT NULL,
+	Телефоны nvarchar(100),
+	Емайл nvarchar(250),
+	Примечание nvarchar(1000),
   CONSTRAINT [PK_ОРГАНИЗАЦИИ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -130,8 +132,8 @@ GO
 CREATE TABLE Sbyt.[Лицевые_счета] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
 	Номер int NOT NULL,
-	Адрес varchar(255) NOT NULL,
-	Примечание varchar(255),
+	Адрес nvarchar(1000) NOT NULL,
+	Примечание nvarchar(1000),
   CONSTRAINT [PK_ЛИЦЕВЫЕ_СЧЕТА] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -144,11 +146,11 @@ CREATE TABLE Sbyt.[Список_объектов] (
 	ДатНач datetime2 NOT NULL,
 	ДатКнц datetime2 NOT NULL DEFAULT '20451231',
 	Номенклатура_Объекты int NOT NULL,
-	Заводской_номер varchar(100) NOT NULL,
-	Номер_пломбы varchar(100) NOT NULL,
+	Заводской_номер nvarchar(100) NOT NULL,
+	Номер_пломбы nvarchar(100) NOT NULL,
 	Тарифность int NOT NULL,
 	Коэффициент_трансформации int NOT NULL,
-	Год_выпуска datetime2 NOT NULL,
+	Год_выпуска date NOT NULL,
 	Объекты_Счет int NOT NULL,
   CONSTRAINT [PK_СПИСОК_ОБЪЕКТОВ] PRIMARY KEY CLUSTERED
   (
@@ -159,11 +161,11 @@ CREATE TABLE Sbyt.[Список_объектов] (
 GO
 CREATE TABLE Sbyt.[Номенклатура] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	Наименование varchar(255) NOT NULL,
-	Номинальная_мощность float NOT NULL,
+	Наименование nvarchar(500) NOT NULL,
+	Номинальная_мощность decimal(10,2) NOT NULL,
 	Разрядность int NOT NULL,
 	Дробная_разрядность tinyint NOT NULL,
-	Завод_изготовитель varchar(255),
+	Завод_изготовитель nvarchar(500),
   CONSTRAINT [PK_НОМЕНКЛАТУРА] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -176,11 +178,11 @@ CREATE TABLE Sbyt.[Показания_счетчиков] (
 	Объект_Показание int NOT NULL,
 	Тип_ввода int NOT NULL,
 	Дата datetime2 NOT NULL,
-	Расчетный_месяц datetime2 NOT NULL,
-	Показание float NOT NULL,
-	Расход float NOT NULL,
-	Дополнительный_расход float NOT NULL,
-	Итоговый_расход float NOT NULL,
+	Расчетный_месяц date NOT NULL,
+	Показание decimal(19,4) NOT NULL,
+	Расход decimal(19,4) NOT NULL,
+	Дополнительный_расход decimal(19,4) NOT NULL,
+	Итоговый_расход decimal(19,4) NOT NULL,
 	Тип tinyint NOT NULL,
   CONSTRAINT [PK_ПОКАЗАНИЯ_СЧЕТЧИКОВ] PRIMARY KEY CLUSTERED
   (
@@ -193,7 +195,7 @@ CREATE TABLE Sbyt.[Журнал_изменений] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
 	Дата datetime2 NOT NULL,
 	Журнал_Пользователь int NOT NULL,
-	Действие varchar(255) NOT NULL,
+	Действие nvarchar(1000) NOT NULL,
 	Журнал_Счет int,
 	Журнал_Договор int,
   CONSTRAINT [PK_ЖУРНАЛ_ИЗМЕНЕНИЙ] PRIMARY KEY CLUSTERED
@@ -206,15 +208,15 @@ GO
 CREATE TABLE Sbyt.[Документ] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
 	Папки int,
-	Папки_Add tinyint NOT NULL DEFAULT '-1',
+	Папки_Add tinyint NOT NULL,
 	Тип_документа int,
 	Номер int,
 	Плательщик int,
 	Грузополучатель int,
-	Количество float,
-	Сумма float,
-	СуммаСНДС float,
-	Наименование varchar(255),
+	Количество decimal(19,4),
+	Сумма decimal(19,4),
+	СуммаСНДС decimal(19,4),
+	Наименование nvarchar(500),
   CONSTRAINT [PK_ДОКУМЕНТ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -225,12 +227,12 @@ GO
 CREATE TABLE Sbyt.[Строки_документа] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
 	Строки_Документ int NOT NULL,
-	Услуга varchar(255) NOT NULL,
-	Количество float NOT NULL,
-	Тариф float NOT NULL,
-	Сумма float NOT NULL,
-	СуммаСНДС float NOT NULL,
-	За_месяц datetime2 NOT NULL,
+	Услуга nvarchar(500) NOT NULL,
+	Количество decimal(19,4) NOT NULL,
+	Тариф decimal(19,4) NOT NULL,
+	Сумма decimal(19,4) NOT NULL,
+	СуммаСНДС decimal(19,4) NOT NULL,
+	За_месяц date NOT NULL,
   CONSTRAINT [PK_СТРОКИ_ДОКУМЕНТА] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -240,12 +242,12 @@ CREATE TABLE Sbyt.[Строки_документа] (
 GO
 CREATE TABLE Sbyt.[Пользователи] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	Логин varchar(100) NOT NULL,
+	Логин nvarchar(250) NOT NULL,
 	Пароль image,
-	Фамилия varchar(100) NOT NULL,
-	Имя varchar(100) NOT NULL,
-	Отчество varchar(100),
-	Отдел varchar(100),
+	Фамилия nvarchar(250) NOT NULL,
+	Имя nvarchar(250) NOT NULL,
+	Отчество nvarchar(250),
+	Отдел nvarchar(500),
   CONSTRAINT [PK_ПОЛЬЗОВАТЕЛИ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -274,19 +276,19 @@ ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk2]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk3] FOREIGN KEY ([Категория]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk3] FOREIGN KEY ([Категория_ИД]) REFERENCES sbyt.[Классификаторы]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk3]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk4] FOREIGN KEY ([Отрасль]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk4] FOREIGN KEY ([Отрасль_ИД]) REFERENCES sbyt.[Классификаторы]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk4]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk5] FOREIGN KEY ([Бюджет]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk5] FOREIGN KEY ([Бюджет_ИД]) REFERENCES sbyt.[Классификаторы]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
@@ -435,9 +437,9 @@ GO
 CREATE INDEX ind_Договор_Плательщик			ON sbyt.[Договор] (Плательщик);
 CREATE INDEX ind_Договор_Грузополучатель	ON sbyt.[Договор] (Грузополучатель);
 CREATE INDEX ind_Договор_Тип				ON sbyt.[Договор] (Тип_договора);
-CREATE INDEX ind_Договор_Категория			ON sbyt.[Договор] (Категория);
-CREATE INDEX ind_Договор_Отрасль			ON sbyt.[Договор] (Отрасль);
-CREATE INDEX ind_Договор_Бюджет				ON sbyt.[Договор] (Бюджет);
+CREATE INDEX ind_Договор_Категория			ON sbyt.[Договор] (Категория_ИД);
+CREATE INDEX ind_Договор_Отрасль			ON sbyt.[Договор] (Отрасль_ИД);
+CREATE INDEX ind_Договор_Бюджет				ON sbyt.[Договор] (Бюджет_ИД);
 
 CREATE INDEX ind_Классификаторы_Тип		ON sbyt.Классификаторы (Тип);
 CREATE INDEX ind_Классификаторы_Папки	ON sbyt.Классификаторы (Папки);
