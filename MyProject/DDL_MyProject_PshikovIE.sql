@@ -3,14 +3,14 @@
 CREATE DATABASE [Project_Sbyt]
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = Sbyt, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt.mdf' , 
---( NAME = Sbyt, FILENAME = N'D:\Sbyt.mdf' , 
+--( NAME = Sbyt, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt.mdf' , 
+( NAME = Sbyt, FILENAME = N'D:\Sbyt.mdf' , 
 	SIZE = 8MB , 
 	MAXSIZE = UNLIMITED, 
 	FILEGROWTH = 30MB )
  LOG ON 
-( NAME = Sbyt_log, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt_log.ldf' , 
---( NAME = Sbyt_log, FILENAME = N'd:\Sbyt_log.ldf' , 
+--( NAME = Sbyt_log, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt_log.ldf' , 
+( NAME = Sbyt_log, FILENAME = N'd:\Sbyt_log.ldf' , 
 	SIZE = 8MB , 
 	MAXSIZE = UNLIMITED , 
 	FILEGROWTH = 30MB )
@@ -80,9 +80,9 @@ CREATE TABLE Sbyt.[Типы_классификатора] (
 )
 GO
 CREATE TABLE Sbyt.[Свойства] (
-	Row_ID int IDENTITY (1,1) NOT NULL,
+	Row_ID bigint IDENTITY (1,1) NOT NULL,
 	Виды_Параметры int NOT NULL,
-	Параметры_Счет int,
+	Параметры_Счет bigint,
 	Параметры_Договор int,
 	Параметры_Организация int,
 	ДатНач datetime2 NOT NULL,
@@ -117,9 +117,9 @@ CREATE TABLE Sbyt.[Организации] (
 )
 GO
 CREATE TABLE Sbyt.[Лицевые_договора] (
-	Row_ID int IDENTITY (1,1) NOT NULL,
+	Row_ID bigint IDENTITY (1,1) NOT NULL,
 	Договор int NOT NULL,
-	Лицевой int NOT NULL,
+	Лицевой bigint NOT NULL,
 	ДатНач datetime2 NOT NULL,
 	ДатКнц datetime2 NOT NULL DEFAULT '20451231',
   CONSTRAINT [PK_ЛИЦЕВЫЕ_ДОГОВОРА] PRIMARY KEY CLUSTERED
@@ -130,7 +130,7 @@ CREATE TABLE Sbyt.[Лицевые_договора] (
 )
 GO
 CREATE TABLE Sbyt.[Лицевые_счета] (
-	Row_ID int IDENTITY (1,1) NOT NULL,
+	Row_ID bigint IDENTITY (1,1) NOT NULL,
 	Номер int NOT NULL,
 	Адрес nvarchar(1000) NOT NULL,
 	Примечание nvarchar(1000),
@@ -142,7 +142,7 @@ CREATE TABLE Sbyt.[Лицевые_счета] (
 )
 GO
 CREATE TABLE Sbyt.[Список_объектов] (
-	Row_ID int IDENTITY (1,1) NOT NULL,
+	Row_ID bigint IDENTITY (1,1) NOT NULL,
 	ДатНач datetime2 NOT NULL,
 	ДатКнц datetime2 NOT NULL DEFAULT '20451231',
 	Номенклатура_Объекты int NOT NULL,
@@ -151,7 +151,7 @@ CREATE TABLE Sbyt.[Список_объектов] (
 	Тарифность int NOT NULL,
 	Коэффициент_трансформации int NOT NULL,
 	Год_выпуска date NOT NULL,
-	Объекты_Счет int NOT NULL,
+	Объекты_Счет bigint NOT NULL,
   CONSTRAINT [PK_СПИСОК_ОБЪЕКТОВ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -174,8 +174,8 @@ CREATE TABLE Sbyt.[Номенклатура] (
 )
 GO
 CREATE TABLE Sbyt.[Показания_счетчиков] (
-	Row_ID int IDENTITY (1,1) NOT NULL,
-	Объект_Показание int NOT NULL,
+	Row_ID bigint IDENTITY (1,1) NOT NULL,
+	Объект_Показание bigint NOT NULL,
 	Тип_ввода int NOT NULL,
 	Дата datetime2 NOT NULL,
 	Расчетный_месяц date NOT NULL,
@@ -192,11 +192,11 @@ CREATE TABLE Sbyt.[Показания_счетчиков] (
 )
 GO
 CREATE TABLE Sbyt.[Журнал_изменений] (
-	Row_ID int IDENTITY (1,1) NOT NULL,
+	Row_ID bigint IDENTITY (1,1) NOT NULL,
 	Дата datetime2 NOT NULL,
 	Журнал_Пользователь int NOT NULL,
 	Действие nvarchar(1000) NOT NULL,
-	Журнал_Счет int,
+	Журнал_Счет bigint,
 	Журнал_Договор int,
   CONSTRAINT [PK_ЖУРНАЛ_ИЗМЕНЕНИЙ] PRIMARY KEY CLUSTERED
   (
@@ -206,8 +206,8 @@ CREATE TABLE Sbyt.[Журнал_изменений] (
 )
 GO
 CREATE TABLE Sbyt.[Документ] (
-	Row_ID int IDENTITY (1,1) NOT NULL,
-	Папки int,
+	Row_ID bigint IDENTITY (1,1) NOT NULL,
+	Папки bigint,
 	Папки_Add tinyint NOT NULL,
 	Тип_документа int,
 	Номер int,
@@ -217,6 +217,7 @@ CREATE TABLE Sbyt.[Документ] (
 	Сумма decimal(19,4),
 	СуммаСНДС decimal(19,4),
 	Наименование nvarchar(500),
+	Документ_Договор int NULL
   CONSTRAINT [PK_ДОКУМЕНТ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
@@ -225,8 +226,8 @@ CREATE TABLE Sbyt.[Документ] (
 )
 GO
 CREATE TABLE Sbyt.[Строки_документа] (
-	Row_ID int IDENTITY (1,1) NOT NULL,
-	Строки_Документ int NOT NULL,
+	Row_ID bigint IDENTITY (1,1) NOT NULL,
+	Строки_Документ bigint NOT NULL,
 	Услуга nvarchar(500) NOT NULL,
 	Количество decimal(19,4) NOT NULL,
 	Тариф decimal(19,4) NOT NULL,
@@ -425,6 +426,12 @@ ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk3]
 GO
+ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk4] FOREIGN KEY ([Документ_Договор]) REFERENCES sbyt.[Договор]([Row_ID])
+ON UPDATE CASCADE
+ON DELETE NO ACTION
+GO
+ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk4]
+GO
 
 ALTER TABLE sbyt.[Строки_документа] WITH CHECK ADD CONSTRAINT [Строки_документа_fk0] FOREIGN KEY ([Строки_Документ]) REFERENCES sbyt.[Документ]([Row_id])
 ON UPDATE NO ACTION
@@ -468,6 +475,7 @@ CREATE INDEX ind_Документ_Тип				ON sbyt.Документ (Тип_документа);
 CREATE INDEX ind_Документ_Плательщик		ON sbyt.Документ (Плательщик);
 CREATE INDEX ind_Документ_Грузополучатель	ON sbyt.Документ (Грузополучатель);
 CREATE INDEX ind_Документ_Папки				ON sbyt.Документ (Папки);
+CREATE INDEX ind_Документ_Договор			ON sbyt.Документ (Документ_Договор);
 
 CREATE INDEX ind_СтрокиДокумента_Документ	ON sbyt.Строки_документа (Строки_Документ);
 GO
