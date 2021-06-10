@@ -100,7 +100,7 @@ CREATE TABLE Sbyt.[Организации] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
 	ИНН nvarchar(24) NOT NULL,
 	КПП nvarchar(20),
-	ОРГН nvarchar(30),
+	ОГРН nvarchar(30),
 	Название nvarchar(500) NOT NULL,
 	Наименование nvarchar(1000) NOT NULL,
 	Вид_организации tinyint NOT NULL,
@@ -440,42 +440,79 @@ GO
 ALTER TABLE sbyt.[Строки_документа] CHECK CONSTRAINT [Строки_документа_fk0]
 GO
 
---Добавление индексов (некластеризованных)
-CREATE INDEX ind_Договор_Плательщик			ON sbyt.[Договор] (Плательщик);
-CREATE INDEX ind_Договор_Грузополучатель	ON sbyt.[Договор] (Грузополучатель);
-CREATE INDEX ind_Договор_Тип				ON sbyt.[Договор] (Тип_договора);
-CREATE INDEX ind_Договор_Категория			ON sbyt.[Договор] (Категория_ИД);
-CREATE INDEX ind_Договор_Отрасль			ON sbyt.[Договор] (Отрасль_ИД);
-CREATE INDEX ind_Договор_Бюджет				ON sbyt.[Договор] (Бюджет_ИД);
+--Добавление индексов 
+--1. Добавление индексов (некластеризованных) на FK (FOREIGN KEY)
+CREATE NONCLUSTERED INDEX ind_Договор_Плательщик			ON sbyt.[Договор] (Плательщик);
+CREATE NONCLUSTERED INDEX ind_Договор_Грузополучатель		ON sbyt.[Договор] (Грузополучатель);
+CREATE NONCLUSTERED INDEX ind_Договор_Тип					ON sbyt.[Договор] (Тип_договора);
+CREATE NONCLUSTERED INDEX ind_Договор_Категория				ON sbyt.[Договор] (Категория_ИД);
+CREATE NONCLUSTERED INDEX ind_Договор_Отрасль				ON sbyt.[Договор] (Отрасль_ИД);
+CREATE NONCLUSTERED INDEX ind_Договор_Бюджет				ON sbyt.[Договор] (Бюджет_ИД);
 
-CREATE INDEX ind_Классификаторы_Тип		ON sbyt.Классификаторы (Тип);
-CREATE INDEX ind_Классификаторы_Папки	ON sbyt.Классификаторы (Папки);
+CREATE NONCLUSTERED INDEX ind_Классификаторы_Тип			ON sbyt.Классификаторы (Тип);
 
-CREATE INDEX ind_Типы_классификатора_Папки ON sbyt.[Типы_классификатора] (Папки);
+CREATE NONCLUSTERED INDEX ind_Свойства_ВидыПараметры		ON sbyt.Свойства (Виды_Параметры);
+CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыСчет		ON sbyt.Свойства (Параметры_Счет);
+CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыДоговор		ON sbyt.Свойства (Параметры_Договор);
+CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыОрганизация	ON sbyt.Свойства (Параметры_Организация);
 
-CREATE INDEX ind_Свойства_ВидыПараметры			ON sbyt.Свойства (Виды_Параметры);
-CREATE INDEX ind_Свойства_ПараметрыСчет			ON sbyt.Свойства (Параметры_Счет);
-CREATE INDEX ind_Свойства_ПараметрыДоговор		ON sbyt.Свойства (Параметры_Договор);
-CREATE INDEX ind_Свойства_ПараметрыОрганизация	ON sbyt.Свойства (Параметры_Организация);
+CREATE NONCLUSTERED INDEX ind_ЛицевыеДоговора_Договор 		ON sbyt.Лицевые_договора (Договор);
+CREATE NONCLUSTERED INDEX ind_ЛицевыеДоговора_Лицевой 		ON sbyt.Лицевые_договора (Лицевой);
 
-CREATE INDEX ind_ЛицевыеДоговора_Договор ON sbyt.Лицевые_договора (Договор);
-CREATE INDEX ind_ЛицевыеДоговора_Лицевой ON sbyt.Лицевые_договора (Лицевой);
+CREATE NONCLUSTERED INDEX ind_СписокОбъектов_Номенклатура	ON sbyt.Список_объектов (Номенклатура_Объекты);
+CREATE NONCLUSTERED INDEX ind_СписокОбъектов_Счет			ON sbyt.Список_объектов (Объекты_Счет);
 
-CREATE INDEX ind_СписокОбъектов_Номенклатура	ON sbyt.Список_объектов (Номенклатура_Объекты);
-CREATE INDEX ind_СписокОбъектов_Счет			ON sbyt.Список_объектов (Объекты_Счет);
+CREATE NONCLUSTERED INDEX ind_ПоказанияСчетчиков_Объект		ON sbyt.Показания_счетчиков (Объект_Показание);
+CREATE NONCLUSTERED INDEX ind_ПоказанияСчетчиков_Тип		ON sbyt.Показания_счетчиков (Тип_ввода);
 
-CREATE INDEX ind_ПоказанияСчетчиков_Объект	ON sbyt.Показания_счетчиков (Объект_Показание);
-CREATE INDEX ind_ПоказанияСчетчиков_Тип		ON sbyt.Показания_счетчиков (Тип_ввода);
+CREATE NONCLUSTERED INDEX ind_Журнал_Счет					ON sbyt.Журнал_изменений (Журнал_Счет);
+CREATE NONCLUSTERED INDEX ind_Журнал_Договор				ON sbyt.Журнал_изменений (Журнал_Договор);
+CREATE NONCLUSTERED INDEX ind_Журнал_Пользователь			ON sbyt.Журнал_изменений (Журнал_Пользователь);
 
-CREATE INDEX ind_Журнал_Счет			ON sbyt.Журнал_изменений (Журнал_Счет);
-CREATE INDEX ind_Журнал_Договор			ON sbyt.Журнал_изменений (Журнал_Договор);
-CREATE INDEX ind_Журнал_Пользователь	ON sbyt.Журнал_изменений (Журнал_Пользователь);
+CREATE NONCLUSTERED INDEX ind_Документ_Тип					ON sbyt.Документ (Тип_документа);
+CREATE NONCLUSTERED INDEX ind_Документ_Плательщик			ON sbyt.Документ (Плательщик);
+CREATE NONCLUSTERED INDEX ind_Документ_Грузополучатель		ON sbyt.Документ (Грузополучатель);
+CREATE NONCLUSTERED INDEX ind_Документ_Договор				ON sbyt.Документ (Документ_Договор);
 
-CREATE INDEX ind_Документ_Тип				ON sbyt.Документ (Тип_документа);
-CREATE INDEX ind_Документ_Плательщик		ON sbyt.Документ (Плательщик);
-CREATE INDEX ind_Документ_Грузополучатель	ON sbyt.Документ (Грузополучатель);
-CREATE INDEX ind_Документ_Папки				ON sbyt.Документ (Папки);
-CREATE INDEX ind_Документ_Договор			ON sbyt.Документ (Документ_Договор);
+CREATE NONCLUSTERED INDEX ind_СтрокиДокумента_Документ	ON sbyt.Строки_документа (Строки_Документ);
+GO
 
-CREATE INDEX ind_СтрокиДокумента_Документ	ON sbyt.Строки_документа (Строки_Документ);
+--2. Добавление индексов на поле ПАПКИ таблиц, для объединения таблиц самих с собой при отображении древовидной структуры на форме приложения.
+
+CREATE NONCLUSTERED INDEX ind_Классификаторы_Папки			ON sbyt.Классификаторы (Папки);
+CREATE NONCLUSTERED INDEX ind_Типы_классификатора_Папки 	ON sbyt.[Типы_классификатора] (Папки);
+CREATE NONCLUSTERED INDEX ind_Документ_Папки				ON sbyt.Документ (Папки);
+GO
+
+--3. Добавление индексов на таблицу Sbyt.[Организации] для быстрого поиска организации по ИНН или ОГРН
+
+CREATE NONCLUSTERED INDEX ind_Организации_ИНН ON Sbyt.[Организации] (ИНН);
+CREATE NONCLUSTERED INDEX ind_Организации_ОГРН ON Sbyt.[Организации] (ОГРН);
+GO
+
+--4. Добавление индекса на таблицу Sbyt.Договор для быстрого поиска номеру договора
+CREATE NONCLUSTERED INDEX ind_Договор_Номер ON Sbyt.Договор (Номер);
+GO
+
+--5. Добавление индекса на таблицу Sbyt.Лицевые_счета для быстрого поиска лицевого счета по его номеру
+CREATE NONCLUSTERED INDEX ind_Лицевые_счета_Номер ON Sbyt.Лицевые_счета (Номер);
+GO
+
+--6. Добавление индекса на таблицу Sbyt.Список_объектов для быстрого поиска прибора учета по его заводскому номеру
+CREATE NONCLUSTERED INDEX ind_Список_объектов_ЗаводскойНомер ON Sbyt.Список_объектов (Заводской_Номер);
+GO
+
+--7. Добавление индекса на таблицу Sbyt.Документ для быстрого поиска документа по его номеру (думаю пригодится для бухгалтерии)
+CREATE NONCLUSTERED INDEX ind_Документ_Номер ON Sbyt.Документ (Номер);
+GO
+
+--8. Добавление индекса на таблицу Sbyt.Журнал_изменений для быстрого отображения журнала за конкретный день
+CREATE NONCLUSTERED INDEX ind_Журнал_изменений_Дата ON Sbyt.Журнал_изменений (Дата);
+GO
+
+--9. Так же добавим составные индексы для выборки данных в зависимости от периода
+
+CREATE INDEX ind_Свойства_ДатНачДатКнц				ON Sbyt.Свойства(ДатНач, ДатКнц);
+CREATE INDEX ind_Список_объектов_ДатНачДатКнц	ON Sbyt.Список_объектов(ДатНач, ДатКнц);
+CREATE INDEX ind_Лицевые_договора_ДатНачДатКнц	ON Sbyt.Лицевые_договора(ДатНач, ДатКнц);
 GO
