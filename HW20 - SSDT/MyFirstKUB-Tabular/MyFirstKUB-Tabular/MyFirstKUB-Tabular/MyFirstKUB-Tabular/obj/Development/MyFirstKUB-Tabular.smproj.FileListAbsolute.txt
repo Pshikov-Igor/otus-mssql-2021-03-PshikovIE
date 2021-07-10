@@ -1,0 +1,7 @@
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW20 - SSDT\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\bin\Model.asdatabase
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW20 - SSDT\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\bin\Model.deploymenttargets
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW20 - SSDT\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\bin\Model.deploymentoptions
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW20 - SSDT\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\obj\Development\MyFirstKUB-Tabular.smproj.CoreCompileInputs.cache
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW20 - SSDT\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\obj\Development\Model.asdatabase
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW20 - SSDT\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\obj\Development\Model.deploymentoptions
+I:\Обучение\OTUS\otus-mssql-2021-03-PshikovIE\HW20 - SSDT\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\MyFirstKUB-Tabular\obj\Development\Model.deploymenttargets
