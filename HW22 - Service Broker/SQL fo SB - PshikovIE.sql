@@ -1,36 +1,36 @@
---ДЗ
+п»ї--Р”Р—
 
---Создайте очередь для формирования отчетов для клиентов по таблице Invoices. При вызове процедуры для создания отчета в очередь должна отправляться заявка.
---При обработке очереди создавайте отчет по количеству заказов (Orders) по клиенту за заданный период времени и складывайте готовый отчет в новую таблицу.
---Проверьте, что вы корректно открываете и закрываете диалоги и у нас они не копятся.
+--РЎРѕР·РґР°Р№С‚Рµ РѕС‡РµСЂРµРґСЊ РґР»СЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ РѕС‚С‡РµС‚РѕРІ РґР»СЏ РєР»РёРµРЅС‚РѕРІ РїРѕ С‚Р°Р±Р»РёС†Рµ Invoices. РџСЂРё РІС‹Р·РѕРІРµ РїСЂРѕС†РµРґСѓСЂС‹ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РѕС‚С‡РµС‚Р° РІ РѕС‡РµСЂРµРґСЊ РґРѕР»Р¶РЅР° РѕС‚РїСЂР°РІР»СЏС‚СЊСЃСЏ Р·Р°СЏРІРєР°.
+--РџСЂРё РѕР±СЂР°Р±РѕС‚РєРµ РѕС‡РµСЂРµРґРё СЃРѕР·РґР°РІР°Р№С‚Рµ РѕС‚С‡РµС‚ РїРѕ РєРѕР»РёС‡РµСЃС‚РІСѓ Р·Р°РєР°Р·РѕРІ (Orders) РїРѕ РєР»РёРµРЅС‚Сѓ Р·Р° Р·Р°РґР°РЅРЅС‹Р№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё Рё СЃРєР»Р°РґС‹РІР°Р№С‚Рµ РіРѕС‚РѕРІС‹Р№ РѕС‚С‡РµС‚ РІ РЅРѕРІСѓСЋ С‚Р°Р±Р»РёС†Сѓ.
+--РџСЂРѕРІРµСЂСЊС‚Рµ, С‡С‚Рѕ РІС‹ РєРѕСЂСЂРµРєС‚РЅРѕ РѕС‚РєСЂС‹РІР°РµС‚Рµ Рё Р·Р°РєСЂС‹РІР°РµС‚Рµ РґРёР°Р»РѕРіРё Рё Сѓ РЅР°СЃ РѕРЅРё РЅРµ РєРѕРїСЏС‚СЃСЏ.
 
 USE [WideWorldImporters];
 
 ------------------------------------------------------------------------------------------------------------------------
--- переводим БД в однопользователский режим
+-- РїРµСЂРµРІРѕРґРёРј Р‘Р” РІ РѕРґРЅРѕРїРѕР»СЊР·РѕРІР°С‚РµР»СЃРєРёР№ СЂРµР¶РёРј
 ALTER DATABASE WideWorldImporters SET SINGLE_USER WITH ROLLBACK IMMEDIATE
 
--- необходимо включить service broker
+-- РЅРµРѕР±С…РѕРґРёРјРѕ РІРєР»СЋС‡РёС‚СЊ service broker
 ALTER DATABASE WideWorldImporters SET ENABLE_BROKER;	
 
--- Разрешаем доверенные подключения
+-- Р Р°Р·СЂРµС€Р°РµРј РґРѕРІРµСЂРµРЅРЅС‹Рµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ
 ALTER DATABASE WideWorldImporters SET TRUSTWORTHY ON; 
--- посмотрим свойства БД через студию
+-- РїРѕСЃРјРѕС‚СЂРёРј СЃРІРѕР№СЃС‚РІР° Р‘Р” С‡РµСЂРµР· СЃС‚СѓРґРёСЋ
 select DATABASEPROPERTYEX ('WideWorldImporters','UserAccess');
 SELECT is_broker_enabled FROM sys.databases WHERE name = 'WideWorldImporters';
 
--- Добавим авторизацию для sa, для доступа с других серверов
+-- Р”РѕР±Р°РІРёРј Р°РІС‚РѕСЂРёР·Р°С†РёСЋ РґР»СЏ sa, РґР»СЏ РґРѕСЃС‚СѓРїР° СЃ РґСЂСѓРіРёС… СЃРµСЂРІРµСЂРѕРІ
 ALTER AUTHORIZATION  
    ON DATABASE::WideWorldImporters TO [sa]; 
 
--- вернем режим БД 
+-- РІРµСЂРЅРµРј СЂРµР¶РёРј Р‘Р” 
 ALTER DATABASE WideWorldImporters SET MULTI_USER WITH ROLLBACK IMMEDIATE
 GO
 ------------------------------------------------------------------------------------------------------------------------
 
---Подготовим Service Brocker
+--РџРѕРґРіРѕС‚РѕРІРёРј Service Brocker
 
---Создадим сообщения
+--РЎРѕР·РґР°РґРёРј СЃРѕРѕР±С‰РµРЅРёСЏ
 CREATE MESSAGE TYPE
 [//WWI/SB/RequestMessage]
 VALIDATION=WELL_FORMED_XML;
@@ -41,7 +41,7 @@ VALIDATION=WELL_FORMED_XML;
 
 GO
 
---Создадим контракт
+--РЎРѕР·РґР°РґРёРј РєРѕРЅС‚СЂР°РєС‚
 CREATE CONTRACT [//WWI/SB/Contract]
       ([//WWI/SB/RequestMessage]
          SENT BY INITIATOR,
@@ -50,12 +50,12 @@ CREATE CONTRACT [//WWI/SB/Contract]
       );
 GO
 
---Создадим очереди
+--РЎРѕР·РґР°РґРёРј РѕС‡РµСЂРµРґРё
 CREATE QUEUE TargetQueueWWI;
 CREATE QUEUE InitiatorQueueWWI;
 GO
 
---Создадим сервис обслуживающий очередь
+--РЎРѕР·РґР°РґРёРј СЃРµСЂРІРёСЃ РѕР±СЃР»СѓР¶РёРІР°СЋС‰РёР№ РѕС‡РµСЂРµРґСЊ
 CREATE SERVICE [//WWI/SB/TargetService]
        ON QUEUE TargetQueueWWI
        ([//WWI/SB/Contract]);
@@ -68,7 +68,7 @@ GO
 
 ------------------------------------------------------------------------------------------------------------------------
 
---Создадим новую таблицу куда будем ложить данные 
+--РЎРѕР·РґР°РґРёРј РЅРѕРІСѓСЋ С‚Р°Р±Р»РёС†Сѓ РєСѓРґР° Р±СѓРґРµРј Р»РѕР¶РёС‚СЊ РґР°РЅРЅС‹Рµ 
 CREATE TABLE Sales.ReportForCustomers
 			(CustomerID		int not null,
 			 CustomerName	nvarchar(100) not null,
@@ -80,7 +80,7 @@ GO
 
 ------------------------------------------------------------------------------------------------------------------------
 
---Создадим процедуру отправки запроса
+--РЎРѕР·РґР°РґРёРј РїСЂРѕС†РµРґСѓСЂСѓ РѕС‚РїСЂР°РІРєРё Р·Р°РїСЂРѕСЃР°
 
 SET ANSI_NULLS ON
 GO
@@ -97,9 +97,9 @@ BEGIN
 
 	--Sending a Request Message to the Target	
 	DECLARE @InitDlgHandle UNIQUEIDENTIFIER; --open init dialog
-	DECLARE @RequestMessage NVARCHAR(4000); --сообщение, которое будем отправлять
+	DECLARE @RequestMessage NVARCHAR(4000); --СЃРѕРѕР±С‰РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ Р±СѓРґРµРј РѕС‚РїСЂР°РІР»СЏС‚СЊ
 	
-	BEGIN TRAN --начинаем транзакцию
+	BEGIN TRAN --РЅР°С‡РёРЅР°РµРј С‚СЂР°РЅР·Р°РєС†РёСЋ
 
 	--Prepare the Message  !!!auto generate XML
 	SELECT @RequestMessage = (SELECT CustomerID, @DateStart as DateStart, @DateEnd as DateEnd
@@ -131,15 +131,15 @@ GO;
 
 ------------------------------------------------------------------------------------------------------------------------
 
---Создадим процедуру приемки запроса
+--РЎРѕР·РґР°РґРёРј РїСЂРѕС†РµРґСѓСЂСѓ РїСЂРёРµРјРєРё Р·Р°РїСЂРѕСЃР°
 CREATE or ALTER PROCEDURE Sales.uspReportForCustomers_GetMessage
 AS
 BEGIN
 
-	DECLARE @TargetDlgHandle UNIQUEIDENTIFIER, --идентификатор диалога
-			@Message NVARCHAR(4000),--полученное сообщение
-			@MessageType Sysname,--тип полученного сообщения
-			@ReplyMessage NVARCHAR(4000),--ответное сообщение
+	DECLARE @TargetDlgHandle UNIQUEIDENTIFIER, --РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РґРёР°Р»РѕРіР°
+			@Message NVARCHAR(4000),--РїРѕР»СѓС‡РµРЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ
+			@MessageType Sysname,--С‚РёРї РїРѕР»СѓС‡РµРЅРЅРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ
+			@ReplyMessage NVARCHAR(4000),--РѕС‚РІРµС‚РЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ
 			@xml XML; 
 
 	DECLARE	@CustomerID INT,
@@ -155,13 +155,13 @@ BEGIN
 		@MessageType = Message_Type_Name
 	FROM dbo.TargetQueueWWI; 
 
-	SELECT @Message; --выводим в консоль полученный месседж
+	SELECT @Message; --РІС‹РІРѕРґРёРј РІ РєРѕРЅСЃРѕР»СЊ РїРѕР»СѓС‡РµРЅРЅС‹Р№ РјРµСЃСЃРµРґР¶
 
-	SET @xml = CAST(@Message AS XML); -- получаем xml из мессаджа
+	SET @xml = CAST(@Message AS XML); -- РїРѕР»СѓС‡Р°РµРј xml РёР· РјРµСЃСЃР°РґР¶Р°
 
 	SELECT @xml; 
 
-	--получаем CustomerID из xml
+	--РїРѕР»СѓС‡Р°РµРј CustomerID РёР· xml
 	SELECT @CustomerID	= Inf.cust.value('@CustomerID'	,'Int'),
 	       @DateStart	= Inf.cust.value('@DateStart'	,'DateTime2'),
 		   @DateEnd		= Inf.cust.value('@DateEnd'		,'DateTime2')
@@ -176,13 +176,13 @@ BEGIN
 						and Invoices.InvoiceDate between @DateStart and @DateEnd
 					GROUP BY Invoices.CustomerID, Customers.CustomerName)
 
-	--Вставим запись в нашу таблицу
+	--Р’СЃС‚Р°РІРёРј Р·Р°РїРёСЃСЊ РІ РЅР°С€Сѓ С‚Р°Р±Р»РёС†Сѓ
 	INSERT INTO Sales.ReportForCustomers
 	(CustomerID,CustomerName,QuantityOrders,DateStart, DateEnd)
 	SELECT CustomerID,CustomerName,NumberOfOrders,@DateStart,@DateEnd
 	FROM custCTE;
 	
-	SELECT @Message AS ReceivedRequestMessage, @MessageType, @CustomerID, @DateStart, @DateEnd; --в лог
+	SELECT @Message AS ReceivedRequestMessage, @MessageType, @CustomerID, @DateStart, @DateEnd; --РІ Р»РѕРі
 	
 	-- Confirm and Send a reply
 	IF @MessageType=N'//WWI/SB/RequestMessage'
@@ -193,10 +193,10 @@ BEGIN
 		MESSAGE TYPE
 		[//WWI/SB/ReplyMessage]
 		(@ReplyMessage);
-		END CONVERSATION @TargetDlgHandle;--закроем диалог со стороны таргета
+		END CONVERSATION @TargetDlgHandle;--Р·Р°РєСЂРѕРµРј РґРёР°Р»РѕРі СЃРѕ СЃС‚РѕСЂРѕРЅС‹ С‚Р°СЂРіРµС‚Р°
 	END 
 	
-	SELECT @ReplyMessage AS SentReplyMessage; --в лог
+	SELECT @ReplyMessage AS SentReplyMessage; --РІ Р»РѕРі
 
 	COMMIT TRAN;
 END;
@@ -205,62 +205,62 @@ END;
 
 ------------------------------------------------------------------------------------------------------------------------
 
---Создадим процедуру подтверждения запроса
+--РЎРѕР·РґР°РґРёРј РїСЂРѕС†РµРґСѓСЂСѓ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ Р·Р°РїСЂРѕСЃР°
 CREATE PROCEDURE Sales.uspReportForCustomers_ConfirmMessage
 AS
 BEGIN
 	--Receiving Reply Message from the Target.	
-	DECLARE @InitiatorReplyDlgHandle UNIQUEIDENTIFIER, --хэндл диалога
+	DECLARE @InitiatorReplyDlgHandle UNIQUEIDENTIFIER, --С…СЌРЅРґР» РґРёР°Р»РѕРіР°
 			@ReplyReceivedMessage NVARCHAR(1000) 
 	
 	BEGIN TRAN; 
 
-	--получим сообщение из очереди инициатора
+	--РїРѕР»СѓС‡РёРј СЃРѕРѕР±С‰РµРЅРёРµ РёР· РѕС‡РµСЂРµРґРё РёРЅРёС†РёР°С‚РѕСЂР°
 		RECEIVE TOP(1)
 			@InitiatorReplyDlgHandle=Conversation_Handle
 			,@ReplyReceivedMessage=Message_Body
 		FROM dbo.InitiatorQueueWWI; 
 		
-		END CONVERSATION @InitiatorReplyDlgHandle; --закроем диалог со стороны инициатора
-		--оба участника диалога должны завершить его
+		END CONVERSATION @InitiatorReplyDlgHandle; --Р·Р°РєСЂРѕРµРј РґРёР°Р»РѕРі СЃРѕ СЃС‚РѕСЂРѕРЅС‹ РёРЅРёС†РёР°С‚РѕСЂР°
+		--РѕР±Р° СѓС‡Р°СЃС‚РЅРёРєР° РґРёР°Р»РѕРіР° РґРѕР»Р¶РЅС‹ Р·Р°РІРµСЂС€РёС‚СЊ РµРіРѕ
 		--https://docs.microsoft.com/ru-ru/sql/t-sql/statements/end-conversation-transact-sql?view=sql-server-ver15
 		
-		SELECT @ReplyReceivedMessage AS ReceivedRepliedMessage; --в консоль
+		SELECT @ReplyReceivedMessage AS ReceivedRepliedMessage; --РІ РєРѕРЅСЃРѕР»СЊ
 
 	COMMIT TRAN; 
 END
 
 ------------------------------------------------------------------------------------------------------------------------
 
---ПРОВЕРКА!!!
+--РџР РћР’Р•Р РљРђ!!!
 
 SELECT DISTINCT top 1000  CustomerID, InvoiceDate
 FROM Sales.Invoices
 
 SELECT * FROM Sales.ReportForCustomers
 
---Отправляем сообщение
+--РћС‚РїСЂР°РІР»СЏРµРј СЃРѕРѕР±С‰РµРЅРёРµ
 EXEC Sales.uspReportForCustomers_SendMessage 
 	@CustomerID = 77, @DateStart = '2013-01-01', @DateEnd = '2021-12-01';
 
---Проверим очереди
+--РџСЂРѕРІРµСЂРёРј РѕС‡РµСЂРµРґРё
 SELECT CAST(message_body AS XML),*
 FROM dbo.TargetQueueWWI;
 
 SELECT CAST(message_body AS XML),*
 FROM dbo.InitiatorQueueWWI;
 
---проверим ручками, что все работает
+--РїСЂРѕРІРµСЂРёРј СЂСѓС‡РєР°РјРё, С‡С‚Рѕ РІСЃРµ СЂР°Р±РѕС‚Р°РµС‚
 --Target
 EXEC Sales.uspReportForCustomers_GetMessage;
 
 --Initiator
 EXEC Sales.uspReportForCustomers_ConfirmMessage;
 
---Таблица Sales.ReportForCustomers заполнилась:
+--РўР°Р±Р»РёС†Р° Sales.ReportForCustomers Р·Р°РїРѕР»РЅРёР»Р°СЃСЊ:
 SELECT * FROM Sales.ReportForCustomers
 
---запрос на просмотр открытых диалогов
+--Р·Р°РїСЂРѕСЃ РЅР° РїСЂРѕСЃРјРѕС‚СЂ РѕС‚РєСЂС‹С‚С‹С… РґРёР°Р»РѕРіРѕРІ
 SELECT conversation_handle, is_initiator, s.name as 'local service', 
 far_service, sc.name 'contract', ce.state_desc
 FROM sys.conversation_endpoints ce
@@ -272,7 +272,7 @@ ORDER BY conversation_handle;
 
 
 ------------------------------------------------------------------------------------------------------------------------
---Автоматизируем =)
+--РђРІС‚РѕРјР°С‚РёР·РёСЂСѓРµРј =)
 
 ALTER QUEUE [dbo].[InitiatorQueueWWI] WITH STATUS = ON , RETENTION = OFF , POISON_MESSAGE_HANDLING (STATUS = OFF) 
 	, ACTIVATION (   STATUS = ON ,
@@ -285,7 +285,7 @@ ALTER QUEUE [dbo].[TargetQueueWWI] WITH STATUS = ON , RETENTION = OFF , POISON_M
 
 GO
 
---Отправляем сообщение
+--РћС‚РїСЂР°РІР»СЏРµРј СЃРѕРѕР±С‰РµРЅРёРµ
 EXEC Sales.uspReportForCustomers_SendMessage 
 	@CustomerID = 832, @DateStart = '2013-01-01', @DateEnd = '2021-12-01';
 
