@@ -1,8 +1,4 @@
-﻿/*
-Задание: 
-Оптимизируйте запрос по БД WorldWideImporters. Приложите текст запроса со статистиками по времени и операциям ввода вывода, опишите кратко ход рассуждений при оптимизации.
-*/
-Use WideWorldImporters
+﻿Use WideWorldImporters
 GO
 
 SET STATISTICS IO, TIME ON
