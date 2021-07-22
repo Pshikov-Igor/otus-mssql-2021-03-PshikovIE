@@ -55,14 +55,12 @@ ORDER BY ord.CustomerID, det.StockItemID
 		dataCTE as (
 						Select OrdersCTE.OrderID, OrdersCTE.CustomerID, det.StockItemID, det.UnitPrice, det.Quantity 
 						from OrdersCTE
-						JOIN Sales.OrderLines	AS det		 ON det.OrderID = OrdersCTE.OrderID 										
-						JOIN Sales.Invoices		AS Inv		 ON Inv.OrderID = OrdersCTE.OrderID 
+						JOIN Sales.OrderLines		AS det		 ON det.OrderID = OrdersCTE.OrderID 										
+						JOIN Sales.Invoices			AS Inv		 ON Inv.OrderID = OrdersCTE.OrderID 
+						JOIN Warehouse.StockItems	AS It		 ON det.StockItemID = It.StockItemID
 						Where DATEDIFF(dd, Inv.InvoiceDate, OrdersCTE.OrderDate) = 0 
 							  and Inv.BillToCustomerID != OrdersCTE.CustomerID
-							  and det.StockItemID in (
-														Select It.StockItemID from Warehouse.StockItems AS It
-														Where It.SupplierId = 12 and det.StockItemID = It.StockItemID
-														) 
+							  and It.SupplierId = 12 
 					)			  
 
 --так же в Select добавим алиасы. Без них не красиво!
