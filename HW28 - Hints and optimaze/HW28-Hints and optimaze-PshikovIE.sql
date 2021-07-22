@@ -47,11 +47,13 @@ ORDER BY ord.CustomerID, det.StockItemID
 					GROUP BY ordTotal.CustomerID 
 					HAVING SUM(Total.UnitPrice*Total.Quantity) > 250000 
 					),
+--Соберем данные по заказам клиентов
 		OrdersCTE as (
 						Select ord.OrderID, ord.CustomerID, ord.OrderDate 
 						from Sales.Orders ord
 						JOIN salesCTE ON salesCTE.CustomerID = ord.CustomerID 
 					  ),
+--Заполним основной CTE данными и навесим логики
 		dataCTE as (
 						Select OrdersCTE.OrderID, OrdersCTE.CustomerID, det.StockItemID, det.UnitPrice, det.Quantity 
 						from OrdersCTE
@@ -63,7 +65,7 @@ ORDER BY ord.CustomerID, det.StockItemID
 							  and It.SupplierId = 12 
 					)			  
 
---так же в Select добавим алиасы. Без них не красиво!
+--Произведем подсчет. Так же в Select добавим алиасы. Без них не красиво!
 Select	dataCTE.CustomerID		as CustomerID, 
 		dataCTE.StockItemID		as StockItemID, 
 		SUM(dataCTE.UnitPrice)	as SumUnitPrice,
