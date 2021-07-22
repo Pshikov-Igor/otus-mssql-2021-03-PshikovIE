@@ -75,12 +75,12 @@ FROM dataCTE
 JOIN Warehouse.StockItemTransactions	AS ItemTrans ON ItemTrans.StockItemID = dataCTE.StockItemID		
 GROUP BY dataCTE.CustomerID, dataCTE.StockItemID 
 ORDER BY dataCTE.CustomerID, dataCTE.StockItemID
-Option (recompile) -- Генерируем новый план запроса
+Option (recompile,force order) -- Генерируем новый план запроса
 
 /*
 Комментарий:
-Получили небольшой выигрыш.
-По сравнению с Вариантом 2 более удачный по времени, однако избавится от большого числа логических операций чтения таблици Invoices хинтами не вышло. 
+Получили небольшой выигрыш. Используя хинт force order уменьшили число логических операций чтения таблици Invoices в 4 раза...
+По сравнению с Вариантом 2 более удачный по времени. 
 Cравнение затраченного времени 
 ---------------------------------------------------
 -Исходный запрос:								  -
@@ -142,7 +142,7 @@ FROM #TempTable AS Tdata
 JOIN Warehouse.StockItemTransactions	AS ItemTrans ON ItemTrans.StockItemID = Tdata.StockItemID		
 GROUP BY Tdata.CustomerID, Tdata.StockItemID 
 ORDER BY Tdata.CustomerID, Tdata.StockItemID
-Option (recompile) -- Генерируем новый план запроса
+Option (recompile,force order) -- Генерируем новый план запроса
 
 SET STATISTICS IO, TIME OFF
 
