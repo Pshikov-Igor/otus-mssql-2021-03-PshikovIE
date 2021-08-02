@@ -1,4 +1,6 @@
 --Создаем БД
+USE [master]
+GO
 
 CREATE DATABASE [Project_Sbyt]
  CONTAINMENT = NONE
@@ -16,6 +18,29 @@ CREATE DATABASE [Project_Sbyt]
 	FILEGROWTH = 30MB )
 GO
 
+USE [Project_Sbyt]
+GO
+
+--Добавим отдельную файловую группу для Журнала операции
+ALTER DATABASE [Project_Sbyt] ADD FILEGROUP [Sbyt_Journal]
+GO
+
+ALTER DATABASE [Project_Sbyt] ADD FILE 
+--( NAME = N'Sbyt_Journal', FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt_Journal.ndf' , 
+( NAME = N'Sbyt_Journal', FILENAME = N'D:\Sbyt_Journal.ndf' , 
+SIZE = 8MB , FILEGROWTH = 100MB ) TO FILEGROUP [Sbyt_Journal]
+GO
+
+--Сделаем нашу таблицу Журнала изменений секционной
+CREATE PARTITION FUNCTION [fnJournalOperationsPartition](datetime2) AS RANGE RIGHT FOR VALUES
+('20200101','20210101','20220101','20230101','20240101', '20250101',
+ '20260101', '20270101', '20280101', '20290101', '20300101', '20310101');																																																									
+GO
+
+CREATE PARTITION SCHEME [schmJournalOperationsPartition] AS PARTITION [fnJournalOperationsPartition] 
+ALL TO ([Sbyt_Journal])
+GO
+
 /*
 USE master; 
 GO 
@@ -23,10 +48,6 @@ IF DB_ID (N'Project_Sbyt') IS NOT NULL
 	DROP DATABASE Project_Sbyt; 
 GO 
 */
-
-use Project_Sbyt;
-GO
-
 
 --Создадим свою схему
 Create schema Sbyt;
@@ -36,15 +57,15 @@ GO
 CREATE TABLE Sbyt.[Договор] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
 	Номер nvarchar(100) NOT NULL,
-	Плательщик int NOT NULL,
-	Грузополучатель int NOT NULL,
+	Плательщик_ИД int NOT NULL,
+	Грузополучатель_ИД int NOT NULL,
 	Начало_договора date NOT NULL,
 	Окончание_договора date NOT NULL DEFAULT '20451231',
 	Тип_договора int NOT NULL,
 	Категория_ИД int,
 	Отрасль_ИД int,
 	Бюджет_ИД int,
-	Примечение nvarchar(1000),
+	Примечание nvarchar(1000),
   CONSTRAINT [PK_ДОГОВОР] PRIMARY KEY CLUSTERED
   (
   [Row_ID] ASC
@@ -118,8 +139,8 @@ CREATE TABLE Sbyt.[Организации] (
 GO
 CREATE TABLE Sbyt.[Лицевые_договора] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	Договор int NOT NULL,
-	Лицевой bigint NOT NULL,
+	Договор_ИД int NOT NULL,
+	Лицевой_ИД bigint NOT NULL,
 	ДатНач datetime2 NOT NULL,
 	ДатКнц datetime2 NOT NULL DEFAULT '20451231',
   CONSTRAINT [PK_ЛИЦЕВЫЕ_ДОГОВОРА] PRIMARY KEY CLUSTERED
@@ -194,25 +215,30 @@ GO
 CREATE TABLE Sbyt.[Журнал_изменений] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
 	Дата datetime2 NOT NULL,
-	Журнал_Пользователь int NOT NULL,
-	Действие nvarchar(1000) NOT NULL,
+	Журнал_Пользователь int,
+	Действие nvarchar(2000),
 	Журнал_Счет bigint,
 	Журнал_Договор int,
-  CONSTRAINT [PK_ЖУРНАЛ_ИЗМЕНЕНИЙ] PRIMARY KEY CLUSTERED
-  (
-  [Row_Id] ASC
-  ) WITH (IGNORE_DUP_KEY = OFF)
-
-)
+	Таблица nvarchar(100),
+	Операция nvarchar(100),
+	ИмяКомпьютера nvarchar(256)
+) ON [schmJournalOperationsPartition](Дата)---в схеме [schmJournalOperationsPartition] по ключу [Дата]
 GO
+
+--добавим кластерный индекс
+ALTER TABLE Sbyt.[Журнал_изменений] ADD CONSTRAINT PK_ЖУРНАЛ_ИЗМЕНЕНИЙ
+PRIMARY KEY CLUSTERED  (Дата, Row_ID)
+ ON [schmJournalOperationsPartition](Дата);
+ 
+ GO
 CREATE TABLE Sbyt.[Документ] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
 	Папки bigint,
 	Папки_Add tinyint NOT NULL,
 	Тип_документа int,
 	Номер int,
-	Плательщик int,
-	Грузополучатель int,
+	Плательщик_ИД int,
+	Грузополучатель_ИД int,
 	Количество decimal(19,4),
 	Сумма decimal(19,4),
 	СуммаСНДС decimal(19,4),
@@ -257,15 +283,14 @@ CREATE TABLE Sbyt.[Пользователи] (
 )
 GO
 
-
 --Добавление внешних ключей и ограничений 
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk0] FOREIGN KEY ([Плательщик]) REFERENCES sbyt.[Организации]([Row_id])
+ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk0] FOREIGN KEY ([Плательщик_ИД]) REFERENCES sbyt.[Организации]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk0]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk1] FOREIGN KEY ([Грузополучатель]) REFERENCES sbyt.[Организации]([Row_id])
+ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk1] FOREIGN KEY ([Грузополучатель_ИД]) REFERENCES sbyt.[Организации]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
@@ -342,13 +367,13 @@ ALTER TABLE sbyt.[Свойства] CHECK CONSTRAINT [Свойства_fk3]
 GO
 
 
-ALTER TABLE sbyt.[Лицевые_договора] WITH CHECK ADD CONSTRAINT [Лицевые_договора_fk0] FOREIGN KEY ([Договор]) REFERENCES sbyt.[Договор]([Row_ID])
+ALTER TABLE sbyt.[Лицевые_договора] WITH CHECK ADD CONSTRAINT [Лицевые_договора_fk0] FOREIGN KEY ([Договор_ИД]) REFERENCES sbyt.[Договор]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Лицевые_договора] CHECK CONSTRAINT [Лицевые_договора_fk0]
 GO
-ALTER TABLE sbyt.[Лицевые_договора] WITH CHECK ADD CONSTRAINT [Лицевые_договора_fk1] FOREIGN KEY ([Лицевой]) REFERENCES sbyt.[Лицевые_счета]([Row_id])
+ALTER TABLE sbyt.[Лицевые_договора] WITH CHECK ADD CONSTRAINT [Лицевые_договора_fk1] FOREIGN KEY ([Лицевой_ИД]) REFERENCES sbyt.[Лицевые_счета]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
@@ -383,24 +408,28 @@ GO
 ALTER TABLE sbyt.[Показания_счетчиков] CHECK CONSTRAINT [Показания_счетчиков_fk1]
 GO
 
-ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk0] FOREIGN KEY ([Журнал_Пользователь]) REFERENCES sbyt.[Пользователи]([Row_id])
+/*
+ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk0] FOREIGN KEY ([Журнал_Счет]) REFERENCES sbyt.[Лицевые_счета]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Журнал_изменений] CHECK CONSTRAINT [Журнал_изменений_fk0]
 GO
-ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk1] FOREIGN KEY ([Журнал_Счет]) REFERENCES sbyt.[Лицевые_счета]([Row_id])
+
+ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk1] FOREIGN KEY ([Журнал_Договор]) REFERENCES sbyt.[Договор]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Журнал_изменений] CHECK CONSTRAINT [Журнал_изменений_fk1]
 GO
-ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk2] FOREIGN KEY ([Журнал_Договор]) REFERENCES sbyt.[Договор]([Row_ID])
+
+ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk2] FOREIGN KEY ([Журнал_Пользователь]) REFERENCES sbyt.[Пользователи]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Журнал_изменений] CHECK CONSTRAINT [Журнал_изменений_fk2]
 GO
+*/
 
 ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk0] FOREIGN KEY ([Папки]) REFERENCES sbyt.[Документ]([Row_id])
 ON UPDATE NO ACTION
@@ -414,13 +443,13 @@ ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk1]
 GO
-ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk2] FOREIGN KEY ([Плательщик]) REFERENCES sbyt.[Организации]([Row_id])
+ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk2] FOREIGN KEY ([Плательщик_ИД]) REFERENCES sbyt.[Организации]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
 ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk2]
 GO
-ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk3] FOREIGN KEY ([Грузополучатель]) REFERENCES sbyt.[Организации]([Row_id])
+ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk3] FOREIGN KEY ([Грузополучатель_ИД]) REFERENCES sbyt.[Организации]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
@@ -442,8 +471,8 @@ GO
 
 --Добавление индексов 
 --1. Добавление индексов (некластеризованных) на FK (FOREIGN KEY)
-CREATE NONCLUSTERED INDEX ind_Договор_Плательщик			ON sbyt.[Договор] (Плательщик);
-CREATE NONCLUSTERED INDEX ind_Договор_Грузополучатель		ON sbyt.[Договор] (Грузополучатель);
+CREATE NONCLUSTERED INDEX ind_Договор_Плательщик			ON sbyt.[Договор] (Плательщик_ИД);
+CREATE NONCLUSTERED INDEX ind_Договор_Грузополучатель		ON sbyt.[Договор] (Грузополучатель_ИД);
 CREATE NONCLUSTERED INDEX ind_Договор_Тип					ON sbyt.[Договор] (Тип_договора);
 CREATE NONCLUSTERED INDEX ind_Договор_Категория				ON sbyt.[Договор] (Категория_ИД);
 CREATE NONCLUSTERED INDEX ind_Договор_Отрасль				ON sbyt.[Договор] (Отрасль_ИД);
@@ -456,8 +485,8 @@ CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыСчет		ON sbyt.Свойства (Параметр
 CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыДоговор		ON sbyt.Свойства (Параметры_Договор);
 CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыОрганизация	ON sbyt.Свойства (Параметры_Организация);
 
-CREATE NONCLUSTERED INDEX ind_ЛицевыеДоговора_Договор 		ON sbyt.Лицевые_договора (Договор);
-CREATE NONCLUSTERED INDEX ind_ЛицевыеДоговора_Лицевой 		ON sbyt.Лицевые_договора (Лицевой);
+CREATE NONCLUSTERED INDEX ind_ЛицевыеДоговора_Договор 		ON sbyt.Лицевые_договора (Договор_ИД);
+CREATE NONCLUSTERED INDEX ind_ЛицевыеДоговора_Лицевой 		ON sbyt.Лицевые_договора (Лицевой_ИД);
 
 CREATE NONCLUSTERED INDEX ind_СписокОбъектов_Номенклатура	ON sbyt.Список_объектов (Номенклатура_Объекты);
 CREATE NONCLUSTERED INDEX ind_СписокОбъектов_Счет			ON sbyt.Список_объектов (Объекты_Счет);
@@ -470,8 +499,8 @@ CREATE NONCLUSTERED INDEX ind_Журнал_Договор				ON sbyt.Журнал_изменений (Журнал
 CREATE NONCLUSTERED INDEX ind_Журнал_Пользователь			ON sbyt.Журнал_изменений (Журнал_Пользователь);
 
 CREATE NONCLUSTERED INDEX ind_Документ_Тип					ON sbyt.Документ (Тип_документа);
-CREATE NONCLUSTERED INDEX ind_Документ_Плательщик			ON sbyt.Документ (Плательщик);
-CREATE NONCLUSTERED INDEX ind_Документ_Грузополучатель		ON sbyt.Документ (Грузополучатель);
+CREATE NONCLUSTERED INDEX ind_Документ_Плательщик			ON sbyt.Документ (Плательщик_ИД);
+CREATE NONCLUSTERED INDEX ind_Документ_Грузополучатель		ON sbyt.Документ (Грузополучатель_ИД);
 CREATE NONCLUSTERED INDEX ind_Документ_Договор				ON sbyt.Документ (Документ_Договор);
 
 CREATE NONCLUSTERED INDEX ind_СтрокиДокумента_Документ	ON sbyt.Строки_документа (Строки_Документ);
@@ -506,13 +535,10 @@ GO
 CREATE NONCLUSTERED INDEX ind_Документ_Номер ON Sbyt.Документ (Номер);
 GO
 
---8. Добавление индекса на таблицу Sbyt.Журнал_изменений для быстрого отображения журнала за конкретный день
-CREATE NONCLUSTERED INDEX ind_Журнал_изменений_Дата ON Sbyt.Журнал_изменений (Дата);
-GO
+--8. Так же добавим составные индексы для выборки данных в зависимости от периода
 
---9. Так же добавим составные индексы для выборки данных в зависимости от периода
-
-CREATE INDEX ind_Свойства_ДатНачДатКнц				ON Sbyt.Свойства(ДатНач, ДатКнц);
+CREATE INDEX ind_Свойства_ДатНачДатКнц			ON Sbyt.Свойства(ДатНач, ДатКнц);
 CREATE INDEX ind_Список_объектов_ДатНачДатКнц	ON Sbyt.Список_объектов(ДатНач, ДатКнц);
 CREATE INDEX ind_Лицевые_договора_ДатНачДатКнц	ON Sbyt.Лицевые_договора(ДатНач, ДатКнц);
 GO
+
