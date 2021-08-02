@@ -325,32 +325,3 @@ INSERT INTO [Sbyt].[Список_объектов]
            ('20210101',@nom,'123456789-07','123-987654',1,1,'20200801',@ls)
 GO
 
--------------------
---Посмотрим итоги--
--------------------
---Посмотрим информацию по созданному договору на текущий момент времени
-
-Declare @prID int	= (Select top 1 k.Row_ID from sbyt.[Классификаторы] k Where k.Тип = 7 and k.Название = 'Площадь помещения')
-
-Select org.ИНН, org.КПП, org.Название, dg.Номер as НомерДоговора, dg.Начало_договора as ДатаДоговора, ls.Номер, ls.Адрес,
-	   ISNULL(sv.Значение, 0)	as ПлощадьПомещения, 
-	   ISNULL(nom.Наименование,'') МодельПрибора, 
-	   ISNULL(so.Заводской_номер,'') as ЗаводскойНомер
-		 from Sbyt.Организации org
-		 join Sbyt.Договор dg			on dg.Плательщик_ИД = org.Row_ID
-		 join Sbyt.Лицевые_договора Ld	on ld.Договор_ИД = dg.Row_ID
-		 join Sbyt.Лицевые_счета Ls		on ld.Лицевой_ИД = ls.Row_ID
-	left join Sbyt.Свойства sv			on sv.Параметры_Счет = ls.Row_ID
-										  and (getdate() between sv.ДатНач and sv.ДатКнц)	
-										  and sv.Виды_Параметры = @prID
-	left join Sbyt.[Список_объектов] so	on so.Объекты_Счет = ls.Row_ID
-	left join Sbyt.Номенклатура nom		on so.Номенклатура_Объекты = nom.Row_ID
-Where org.ИНН = '1111111111' and GETDATE() between ld.ДатНач and ld.ДатКнц
-
- --Таблицы созданы
- --смотрим какие таблицы у нас партиционированы
-select distinct t.name as PartitionalTable
-from sys.partitions p
-inner join sys.tables t
-	on p.object_id = t.object_id
-where p.partition_number <> 1
