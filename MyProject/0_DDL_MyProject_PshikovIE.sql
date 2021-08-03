@@ -1,17 +1,17 @@
---Создаем БД
+п»ї--РЎРѕР·РґР°РµРј Р‘Р”
 USE [master]
 GO
 
 CREATE DATABASE [Project_Sbyt]
  CONTAINMENT = NONE
  ON  PRIMARY 
---( NAME = Sbyt, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt.mdf' , 
+--( NAME = Sbyt, FILENAME = N'I:\РћР±СѓС‡РµРЅРёРµ\OTUS\Bases\Sbyt.mdf' , 
 ( NAME = Sbyt, FILENAME = N'D:\Sbyt.mdf' , 
 	SIZE = 8MB , 
 	MAXSIZE = UNLIMITED, 
 	FILEGROWTH = 30MB )
  LOG ON 
---( NAME = Sbyt_log, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt_log.ldf' , 
+--( NAME = Sbyt_log, FILENAME = N'I:\РћР±СѓС‡РµРЅРёРµ\OTUS\Bases\Sbyt_log.ldf' , 
 ( NAME = Sbyt_log, FILENAME = N'd:\Sbyt_log.ldf' , 
 	SIZE = 8MB , 
 	MAXSIZE = UNLIMITED , 
@@ -21,17 +21,17 @@ GO
 USE [Project_Sbyt]
 GO
 
---Добавим отдельную файловую группу для Журнала операции
+--Р”РѕР±Р°РІРёРј РѕС‚РґРµР»СЊРЅСѓСЋ С„Р°Р№Р»РѕРІСѓСЋ РіСЂСѓРїРїСѓ РґР»СЏ Р–СѓСЂРЅР°Р»Р° РѕРїРµСЂР°С†РёРё
 ALTER DATABASE [Project_Sbyt] ADD FILEGROUP [Sbyt_Journal]
 GO
 
 ALTER DATABASE [Project_Sbyt] ADD FILE 
---( NAME = N'Sbyt_Journal', FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt_Journal.ndf' , 
+--( NAME = N'Sbyt_Journal', FILENAME = N'I:\РћР±СѓС‡РµРЅРёРµ\OTUS\Bases\Sbyt_Journal.ndf' , 
 ( NAME = N'Sbyt_Journal', FILENAME = N'D:\Sbyt_Journal.ndf' , 
 SIZE = 8MB , FILEGROWTH = 100MB ) TO FILEGROUP [Sbyt_Journal]
 GO
 
---Сделаем нашу таблицу Журнала изменений секционной
+--РЎРґРµР»Р°РµРј РЅР°С€Сѓ С‚Р°Р±Р»РёС†Сѓ Р–СѓСЂРЅР°Р»Р° РёР·РјРµРЅРµРЅРёР№ СЃРµРєС†РёРѕРЅРЅРѕР№
 CREATE PARTITION FUNCTION [fnJournalOperationsPartition](datetime2) AS RANGE RIGHT FOR VALUES
 ('20200101','20210101','20220101','20230101','20240101', '20250101',
  '20260101', '20270101', '20280101', '20290101', '20300101', '20310101');																																																									
@@ -49,234 +49,234 @@ IF DB_ID (N'Project_Sbyt') IS NOT NULL
 GO 
 */
 
---Создадим свою схему
+--РЎРѕР·РґР°РґРёРј СЃРІРѕСЋ СЃС…РµРјСѓ
 Create schema Sbyt;
 GO
 
---Создаем таблицы
-CREATE TABLE Sbyt.[Договор] (
+--РЎРѕР·РґР°РµРј С‚Р°Р±Р»РёС†С‹
+CREATE TABLE Sbyt.[Р”РѕРіРѕРІРѕСЂ] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	Номер nvarchar(100) NOT NULL,
-	Плательщик_ИД int NOT NULL,
-	Грузополучатель_ИД int NOT NULL,
-	Начало_договора date NOT NULL,
-	Окончание_договора date NOT NULL DEFAULT '20451231',
-	Тип_договора int NOT NULL,
-	Категория_ИД int,
-	Отрасль_ИД int,
-	Бюджет_ИД int,
-	Примечание nvarchar(1000),
-  CONSTRAINT [PK_ДОГОВОР] PRIMARY KEY CLUSTERED
+	РќРѕРјРµСЂ nvarchar(100) NOT NULL,
+	РџР»Р°С‚РµР»СЊС‰РёРє_РР” int NOT NULL,
+	Р“СЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЊ_РР” int NOT NULL,
+	РќР°С‡Р°Р»Рѕ_РґРѕРіРѕРІРѕСЂР° date NOT NULL,
+	РћРєРѕРЅС‡Р°РЅРёРµ_РґРѕРіРѕРІРѕСЂР° date NOT NULL DEFAULT '20451231',
+	РўРёРї_РґРѕРіРѕРІРѕСЂР° int NOT NULL,
+	РљР°С‚РµРіРѕСЂРёСЏ_РР” int,
+	РћС‚СЂР°СЃР»СЊ_РР” int,
+	Р‘СЋРґР¶РµС‚_РР” int,
+	РџСЂРёРјРµС‡Р°РЅРёРµ nvarchar(1000),
+  CONSTRAINT [PK_Р”РћР“РћР’РћР ] PRIMARY KEY CLUSTERED
   (
   [Row_ID] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Классификаторы] (
+CREATE TABLE Sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	Тип int,
-	Папки int,
-	Папки_Add tinyint NOT NULL,
-	Код int,
-	Название nvarchar(1000),
-	Примечание nvarchar(1000),
-  CONSTRAINT [PK_КЛАССИФИКАТОРЫ] PRIMARY KEY CLUSTERED
+	РўРёРї int,
+	РџР°РїРєРё int,
+	РџР°РїРєРё_Add tinyint NOT NULL,
+	РљРѕРґ int,
+	РќР°Р·РІР°РЅРёРµ nvarchar(1000),
+	РџСЂРёРјРµС‡Р°РЅРёРµ nvarchar(1000),
+  CONSTRAINT [PK_РљР›РђРЎРЎРР¤РРљРђРўРћР Р«] PRIMARY KEY CLUSTERED
   (
   [Row_ID] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Типы_классификатора] (
+CREATE TABLE Sbyt.[РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	Папки int,
-	Папки_Add tinyint NOT NULL,
-	Название nvarchar(500) NOT NULL,
-  CONSTRAINT [PK_ТИПЫ_КЛАССИФИКАТОРА] PRIMARY KEY CLUSTERED
+	РџР°РїРєРё int,
+	РџР°РїРєРё_Add tinyint NOT NULL,
+	РќР°Р·РІР°РЅРёРµ nvarchar(500) NOT NULL,
+  CONSTRAINT [PK_РўРРџР«_РљР›РђРЎРЎРР¤РРљРђРўРћР Рђ] PRIMARY KEY CLUSTERED
   (
   [Row_ID] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Свойства] (
+CREATE TABLE Sbyt.[РЎРІРѕР№СЃС‚РІР°] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	Виды_Параметры int NOT NULL,
-	Параметры_Счет bigint,
-	Параметры_Договор int,
-	Параметры_Организация int,
-	ДатНач datetime2 NOT NULL,
-	ДатКнц datetime2 NOT NULL DEFAULT '20451231',
-	Значение int NOT NULL,
-	Примечание nvarchar(1000) NOT NULL,
-  CONSTRAINT [PK_СВОЙСТВА] PRIMARY KEY CLUSTERED
+	Р’РёРґС‹_РџР°СЂР°РјРµС‚СЂС‹ int NOT NULL,
+	РџР°СЂР°РјРµС‚СЂС‹_РЎС‡РµС‚ bigint,
+	РџР°СЂР°РјРµС‚СЂС‹_Р”РѕРіРѕРІРѕСЂ int,
+	РџР°СЂР°РјРµС‚СЂС‹_РћСЂРіР°РЅРёР·Р°С†РёСЏ int,
+	Р”Р°С‚РќР°С‡ datetime2 NOT NULL,
+	Р”Р°С‚РљРЅС† datetime2 NOT NULL DEFAULT '20451231',
+	Р—РЅР°С‡РµРЅРёРµ int NOT NULL,
+	РџСЂРёРјРµС‡Р°РЅРёРµ nvarchar(1000) NOT NULL,
+  CONSTRAINT [PK_РЎР’РћР™РЎРўР’Рђ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Организации] (
+CREATE TABLE Sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	ИНН nvarchar(24) NOT NULL,
-	КПП nvarchar(20),
-	ОГРН nvarchar(30),
-	Название nvarchar(500) NOT NULL,
-	Наименование nvarchar(1000) NOT NULL,
-	Вид_организации tinyint NOT NULL,
-	Юридический_адрес nvarchar(1000) NOT NULL,
-	Фактический_адрес nvarchar(1000) NOT NULL,
-	Телефоны nvarchar(100),
-	Емайл nvarchar(250),
-	Примечание nvarchar(1000),
-  CONSTRAINT [PK_ОРГАНИЗАЦИИ] PRIMARY KEY CLUSTERED
+	РРќРќ nvarchar(24) NOT NULL,
+	РљРџРџ nvarchar(20),
+	РћР“Р Рќ nvarchar(30),
+	РќР°Р·РІР°РЅРёРµ nvarchar(500) NOT NULL,
+	РќР°РёРјРµРЅРѕРІР°РЅРёРµ nvarchar(1000) NOT NULL,
+	Р’РёРґ_РѕСЂРіР°РЅРёР·Р°С†РёРё tinyint NOT NULL,
+	Р®СЂРёРґРёС‡РµСЃРєРёР№_Р°РґСЂРµСЃ nvarchar(1000) NOT NULL,
+	Р¤Р°РєС‚РёС‡РµСЃРєРёР№_Р°РґСЂРµСЃ nvarchar(1000) NOT NULL,
+	РўРµР»РµС„РѕРЅС‹ nvarchar(100),
+	Р•РјР°Р№Р» nvarchar(250),
+	РџСЂРёРјРµС‡Р°РЅРёРµ nvarchar(1000),
+  CONSTRAINT [PK_РћР Р“РђРќРР—РђР¦РР] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Лицевые_договора] (
+CREATE TABLE Sbyt.[Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	Договор_ИД int NOT NULL,
-	Лицевой_ИД bigint NOT NULL,
-	ДатНач datetime2 NOT NULL,
-	ДатКнц datetime2 NOT NULL DEFAULT '20451231',
-  CONSTRAINT [PK_ЛИЦЕВЫЕ_ДОГОВОРА] PRIMARY KEY CLUSTERED
+	Р”РѕРіРѕРІРѕСЂ_РР” int NOT NULL,
+	Р›РёС†РµРІРѕР№_РР” bigint NOT NULL,
+	Р”Р°С‚РќР°С‡ datetime2 NOT NULL,
+	Р”Р°С‚РљРЅС† datetime2 NOT NULL DEFAULT '20451231',
+  CONSTRAINT [PK_Р›РР¦Р•Р’Р«Р•_Р”РћР“РћР’РћР Рђ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Лицевые_счета] (
+CREATE TABLE Sbyt.[Р›РёС†РµРІС‹Рµ_СЃС‡РµС‚Р°] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	Номер int NOT NULL,
-	Адрес nvarchar(1000) NOT NULL,
-	Примечание nvarchar(1000),
-  CONSTRAINT [PK_ЛИЦЕВЫЕ_СЧЕТА] PRIMARY KEY CLUSTERED
+	РќРѕРјРµСЂ int NOT NULL,
+	РђРґСЂРµСЃ nvarchar(1000) NOT NULL,
+	РџСЂРёРјРµС‡Р°РЅРёРµ nvarchar(1000),
+  CONSTRAINT [PK_Р›РР¦Р•Р’Р«Р•_РЎР§Р•РўРђ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Список_объектов] (
+CREATE TABLE Sbyt.[РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	ДатНач datetime2 NOT NULL,
-	ДатКнц datetime2 NOT NULL DEFAULT '20451231',
-	Номенклатура_Объекты int NOT NULL,
-	Заводской_номер nvarchar(100) NOT NULL,
-	Номер_пломбы nvarchar(100) NOT NULL,
-	Тарифность int NOT NULL,
-	Коэффициент_трансформации int NOT NULL,
-	Год_выпуска date NOT NULL,
-	Объекты_Счет bigint NOT NULL,
-  CONSTRAINT [PK_СПИСОК_ОБЪЕКТОВ] PRIMARY KEY CLUSTERED
+	Р”Р°С‚РќР°С‡ datetime2 NOT NULL,
+	Р”Р°С‚РљРЅС† datetime2 NOT NULL DEFAULT '20451231',
+	РќРѕРјРµРЅРєР»Р°С‚СѓСЂР°_РћР±СЉРµРєС‚С‹ int NOT NULL,
+	Р—Р°РІРѕРґСЃРєРѕР№_РЅРѕРјРµСЂ nvarchar(100) NOT NULL,
+	РќРѕРјРµСЂ_РїР»РѕРјР±С‹ nvarchar(100) NOT NULL,
+	РўР°СЂРёС„РЅРѕСЃС‚СЊ int NOT NULL,
+	РљРѕСЌС„С„РёС†РёРµРЅС‚_С‚СЂР°РЅСЃС„РѕСЂРјР°С†РёРё int NOT NULL,
+	Р“РѕРґ_РІС‹РїСѓСЃРєР° date NOT NULL,
+	РћР±СЉРµРєС‚С‹_РЎС‡РµС‚ bigint NOT NULL,
+  CONSTRAINT [PK_РЎРџРРЎРћРљ_РћР‘РЄР•РљРўРћР’] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Номенклатура] (
+CREATE TABLE Sbyt.[РќРѕРјРµРЅРєР»Р°С‚СѓСЂР°] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	Наименование nvarchar(500) NOT NULL,
-	Номинальная_мощность decimal(10,2) NOT NULL,
-	Разрядность int NOT NULL,
-	Дробная_разрядность tinyint NOT NULL,
-	Завод_изготовитель nvarchar(500),
-  CONSTRAINT [PK_НОМЕНКЛАТУРА] PRIMARY KEY CLUSTERED
+	РќР°РёРјРµРЅРѕРІР°РЅРёРµ nvarchar(500) NOT NULL,
+	РќРѕРјРёРЅР°Р»СЊРЅР°СЏ_РјРѕС‰РЅРѕСЃС‚СЊ decimal(10,2) NOT NULL,
+	Р Р°Р·СЂСЏРґРЅРѕСЃС‚СЊ int NOT NULL,
+	Р”СЂРѕР±РЅР°СЏ_СЂР°Р·СЂСЏРґРЅРѕСЃС‚СЊ tinyint NOT NULL,
+	Р—Р°РІРѕРґ_РёР·РіРѕС‚РѕРІРёС‚РµР»СЊ nvarchar(500),
+  CONSTRAINT [PK_РќРћРњР•РќРљР›РђРўРЈР Рђ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Показания_счетчиков] (
+CREATE TABLE Sbyt.[РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	Объект_Показание bigint NOT NULL,
-	Тип_ввода int NOT NULL,
-	Дата datetime2 NOT NULL,
-	Расчетный_месяц date NOT NULL,
-	Показание decimal(19,4) NOT NULL,
-	Расход decimal(19,4) NOT NULL,
-	Дополнительный_расход decimal(19,4) NOT NULL,
-	Итоговый_расход decimal(19,4) NOT NULL,
-	Тип tinyint NOT NULL,
-  CONSTRAINT [PK_ПОКАЗАНИЯ_СЧЕТЧИКОВ] PRIMARY KEY CLUSTERED
+	РћР±СЉРµРєС‚_РџРѕРєР°Р·Р°РЅРёРµ bigint NOT NULL,
+	РўРёРї_РІРІРѕРґР° int NOT NULL,
+	Р”Р°С‚Р° datetime2 NOT NULL,
+	Р Р°СЃС‡РµС‚РЅС‹Р№_РјРµСЃСЏС† date NOT NULL,
+	РџРѕРєР°Р·Р°РЅРёРµ decimal(19,4) NOT NULL,
+	Р Р°СЃС…РѕРґ decimal(19,4) NOT NULL,
+	Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№_СЂР°СЃС…РѕРґ decimal(19,4) NOT NULL,
+	РС‚РѕРіРѕРІС‹Р№_СЂР°СЃС…РѕРґ decimal(19,4) NOT NULL,
+	РўРёРї tinyint NOT NULL,
+  CONSTRAINT [PK_РџРћРљРђР—РђРќРРЇ_РЎР§Р•РўР§РРљРћР’] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Журнал_изменений] (
+CREATE TABLE Sbyt.[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	Дата datetime2 NOT NULL,
-	Журнал_Пользователь int,
-	Действие nvarchar(2000),
-	Журнал_Счет bigint,
-	Журнал_Договор int,
-	Таблица nvarchar(100),
-	Операция nvarchar(100),
-	ИмяКомпьютера nvarchar(256)
-) ON [schmJournalOperationsPartition](Дата)---в схеме [schmJournalOperationsPartition] по ключу [Дата]
+	Р”Р°С‚Р° datetime2 NOT NULL,
+	Р–СѓСЂРЅР°Р»_РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ int,
+	Р”РµР№СЃС‚РІРёРµ nvarchar(2000),
+	Р–СѓСЂРЅР°Р»_РЎС‡РµС‚ bigint,
+	Р–СѓСЂРЅР°Р»_Р”РѕРіРѕРІРѕСЂ int,
+	РўР°Р±Р»РёС†Р° nvarchar(100),
+	РћРїРµСЂР°С†РёСЏ nvarchar(100),
+	РРјСЏРљРѕРјРїСЊСЋС‚РµСЂР° nvarchar(256)
+) ON [schmJournalOperationsPartition](Р”Р°С‚Р°)---РІ СЃС…РµРјРµ [schmJournalOperationsPartition] РїРѕ РєР»СЋС‡Сѓ [Р”Р°С‚Р°]
 GO
 
---добавим кластерный индекс
-ALTER TABLE Sbyt.[Журнал_изменений] ADD CONSTRAINT PK_ЖУРНАЛ_ИЗМЕНЕНИЙ
-PRIMARY KEY CLUSTERED  (Дата, Row_ID)
- ON [schmJournalOperationsPartition](Дата);
+--РґРѕР±Р°РІРёРј РєР»Р°СЃС‚РµСЂРЅС‹Р№ РёРЅРґРµРєСЃ
+ALTER TABLE Sbyt.[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№] ADD CONSTRAINT PK_Р–РЈР РќРђР›_РР—РњР•РќР•РќРР™
+PRIMARY KEY CLUSTERED  (Р”Р°С‚Р°, Row_ID)
+ ON [schmJournalOperationsPartition](Р”Р°С‚Р°);
  
  GO
-CREATE TABLE Sbyt.[Документ] (
+CREATE TABLE Sbyt.[Р”РѕРєСѓРјРµРЅС‚] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	Папки bigint,
-	Папки_Add tinyint NOT NULL,
-	Тип_документа int,
-	Номер int,
-	Дата date,
-	Плательщик_ИД int,
-	Грузополучатель_ИД int,
-	Количество decimal(19,4),
-	Сумма decimal(19,4),
-	СуммаСНДС decimal(19,4),
-	Наименование nvarchar(500),
-	Документ_Договор int NULL
-  CONSTRAINT [PK_ДОКУМЕНТ] PRIMARY KEY CLUSTERED
+	РџР°РїРєРё bigint,
+	РџР°РїРєРё_Add tinyint NOT NULL,
+	РўРёРї_РґРѕРєСѓРјРµРЅС‚Р° int,
+	РќРѕРјРµСЂ int,
+	Р”Р°С‚Р° date,
+	РџР»Р°С‚РµР»СЊС‰РёРє_РР” int,
+	Р“СЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЊ_РР” int,
+	РљРѕР»РёС‡РµСЃС‚РІРѕ decimal(19,4),
+	РЎСѓРјРјР° decimal(19,4),
+	РЎСѓРјРјР°РЎРќР”РЎ decimal(19,4),
+	РќР°РёРјРµРЅРѕРІР°РЅРёРµ nvarchar(500),
+	Р”РѕРєСѓРјРµРЅС‚_Р”РѕРіРѕРІРѕСЂ int NULL
+  CONSTRAINT [PK_Р”РћРљРЈРњР•РќРў] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Строки_документа] (
+CREATE TABLE Sbyt.[РЎС‚СЂРѕРєРё_РґРѕРєСѓРјРµРЅС‚Р°] (
 	Row_ID bigint IDENTITY (1,1) NOT NULL,
-	Строки_Документ bigint NOT NULL,
-	Услуга nvarchar(500) NOT NULL,
-	Количество decimal(19,4) NOT NULL,
-	Тариф decimal(19,4) NOT NULL,
-	Сумма decimal(19,4) NOT NULL,
-	СуммаСНДС decimal(19,4) NOT NULL,
-	За_месяц date NOT NULL,
-  CONSTRAINT [PK_СТРОКИ_ДОКУМЕНТА] PRIMARY KEY CLUSTERED
+	РЎС‚СЂРѕРєРё_Р”РѕРєСѓРјРµРЅС‚ bigint NOT NULL,
+	РЈСЃР»СѓРіР° nvarchar(500) NOT NULL,
+	РљРѕР»РёС‡РµСЃС‚РІРѕ decimal(19,4) NOT NULL,
+	РўР°СЂРёС„ decimal(19,4) NOT NULL,
+	РЎСѓРјРјР° decimal(19,4) NOT NULL,
+	РЎСѓРјРјР°РЎРќР”РЎ decimal(19,4) NOT NULL,
+	Р—Р°_РјРµСЃСЏС† date NOT NULL,
+  CONSTRAINT [PK_РЎРўР РћРљР_Р”РћРљРЈРњР•РќРўРђ] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
 
 )
 GO
-CREATE TABLE Sbyt.[Пользователи] (
+CREATE TABLE Sbyt.[РџРѕР»СЊР·РѕРІР°С‚РµР»Рё] (
 	Row_ID int IDENTITY (1,1) NOT NULL,
-	Логин nvarchar(250) NOT NULL,
-	Пароль image,
-	Фамилия nvarchar(250) NOT NULL,
-	Имя nvarchar(250) NOT NULL,
-	Отчество nvarchar(250),
-	Отдел nvarchar(500),
-  CONSTRAINT [PK_ПОЛЬЗОВАТЕЛИ] PRIMARY KEY CLUSTERED
+	Р›РѕРіРёРЅ nvarchar(250) NOT NULL,
+	РџР°СЂРѕР»СЊ image,
+	Р¤Р°РјРёР»РёСЏ nvarchar(250) NOT NULL,
+	РРјСЏ nvarchar(250) NOT NULL,
+	РћС‚С‡РµСЃС‚РІРѕ nvarchar(250),
+	РћС‚РґРµР» nvarchar(500),
+  CONSTRAINT [PK_РџРћР›Р¬Р—РћР’РђРўР•Р›Р] PRIMARY KEY CLUSTERED
   (
   [Row_id] ASC
   ) WITH (IGNORE_DUP_KEY = OFF)
@@ -284,261 +284,261 @@ CREATE TABLE Sbyt.[Пользователи] (
 )
 GO
 
---Добавление внешних ключей и ограничений 
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk0] FOREIGN KEY ([Плательщик_ИД]) REFERENCES sbyt.[Организации]([Row_id])
+--Р”РѕР±Р°РІР»РµРЅРёРµ РІРЅРµС€РЅРёС… РєР»СЋС‡РµР№ Рё РѕРіСЂР°РЅРёС‡РµРЅРёР№ 
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] WITH CHECK ADD CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk0] FOREIGN KEY ([РџР»Р°С‚РµР»СЊС‰РёРє_РР”]) REFERENCES sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk0]
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] CHECK CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk0]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk1] FOREIGN KEY ([Грузополучатель_ИД]) REFERENCES sbyt.[Организации]([Row_id])
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] WITH CHECK ADD CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk1] FOREIGN KEY ([Р“СЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЊ_РР”]) REFERENCES sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk1]
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] CHECK CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk1]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk2] FOREIGN KEY ([Тип_договора]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] WITH CHECK ADD CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk2] FOREIGN KEY ([РўРёРї_РґРѕРіРѕРІРѕСЂР°]) REFERENCES sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk2]
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] CHECK CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk2]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk3] FOREIGN KEY ([Категория_ИД]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] WITH CHECK ADD CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk3] FOREIGN KEY ([РљР°С‚РµРіРѕСЂРёСЏ_РР”]) REFERENCES sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk3]
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] CHECK CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk3]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk4] FOREIGN KEY ([Отрасль_ИД]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] WITH CHECK ADD CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk4] FOREIGN KEY ([РћС‚СЂР°СЃР»СЊ_РР”]) REFERENCES sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk4]
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] CHECK CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk4]
 GO
-ALTER TABLE sbyt.[Договор] WITH CHECK ADD CONSTRAINT [Договор_fk5] FOREIGN KEY ([Бюджет_ИД]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] WITH CHECK ADD CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk5] FOREIGN KEY ([Р‘СЋРґР¶РµС‚_РР”]) REFERENCES sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Договор] CHECK CONSTRAINT [Договор_fk5]
+ALTER TABLE sbyt.[Р”РѕРіРѕРІРѕСЂ] CHECK CONSTRAINT [Р”РѕРіРѕРІРѕСЂ_fk5]
 GO
 
-ALTER TABLE sbyt.[Классификаторы] WITH CHECK ADD CONSTRAINT [Классификаторы_fk0] FOREIGN KEY ([Тип]) REFERENCES sbyt.[Типы_классификатора]([Row_ID])
+ALTER TABLE sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹] WITH CHECK ADD CONSTRAINT [РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹_fk0] FOREIGN KEY ([РўРёРї]) REFERENCES sbyt.[РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Классификаторы] CHECK CONSTRAINT [Классификаторы_fk0]
+ALTER TABLE sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹] CHECK CONSTRAINT [РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹_fk0]
 GO
-ALTER TABLE sbyt.[Классификаторы] WITH CHECK ADD CONSTRAINT [Классификаторы_fk1] FOREIGN KEY ([Папки]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹] WITH CHECK ADD CONSTRAINT [РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹_fk1] FOREIGN KEY ([РџР°РїРєРё]) REFERENCES sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Классификаторы] CHECK CONSTRAINT [Классификаторы_fk1]
+ALTER TABLE sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹] CHECK CONSTRAINT [РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹_fk1]
 GO
 
-ALTER TABLE sbyt.[Типы_классификатора] WITH CHECK ADD CONSTRAINT [Типы_классификатора_fk0] FOREIGN KEY ([Папки]) REFERENCES sbyt.[Типы_классификатора]([Row_ID])
+ALTER TABLE sbyt.[РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°] WITH CHECK ADD CONSTRAINT [РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°_fk0] FOREIGN KEY ([РџР°РїРєРё]) REFERENCES sbyt.[РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Типы_классификатора] CHECK CONSTRAINT [Типы_классификатора_fk0]
+ALTER TABLE sbyt.[РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°] CHECK CONSTRAINT [РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°_fk0]
 GO
 
-ALTER TABLE sbyt.[Свойства] WITH CHECK ADD CONSTRAINT [Свойства_fk0] FOREIGN KEY ([Виды_Параметры]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[РЎРІРѕР№СЃС‚РІР°] WITH CHECK ADD CONSTRAINT [РЎРІРѕР№СЃС‚РІР°_fk0] FOREIGN KEY ([Р’РёРґС‹_РџР°СЂР°РјРµС‚СЂС‹]) REFERENCES sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Свойства] CHECK CONSTRAINT [Свойства_fk0]
+ALTER TABLE sbyt.[РЎРІРѕР№СЃС‚РІР°] CHECK CONSTRAINT [РЎРІРѕР№СЃС‚РІР°_fk0]
 GO
-ALTER TABLE sbyt.[Свойства] WITH CHECK ADD CONSTRAINT [Свойства_fk1] FOREIGN KEY ([Параметры_Счет]) REFERENCES sbyt.[Лицевые_счета]([Row_id])
+ALTER TABLE sbyt.[РЎРІРѕР№СЃС‚РІР°] WITH CHECK ADD CONSTRAINT [РЎРІРѕР№СЃС‚РІР°_fk1] FOREIGN KEY ([РџР°СЂР°РјРµС‚СЂС‹_РЎС‡РµС‚]) REFERENCES sbyt.[Р›РёС†РµРІС‹Рµ_СЃС‡РµС‚Р°]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Свойства] CHECK CONSTRAINT [Свойства_fk1]
+ALTER TABLE sbyt.[РЎРІРѕР№СЃС‚РІР°] CHECK CONSTRAINT [РЎРІРѕР№СЃС‚РІР°_fk1]
 GO
-ALTER TABLE sbyt.[Свойства] WITH CHECK ADD CONSTRAINT [Свойства_fk2] FOREIGN KEY ([Параметры_Договор]) REFERENCES sbyt.[Договор]([Row_ID])
+ALTER TABLE sbyt.[РЎРІРѕР№СЃС‚РІР°] WITH CHECK ADD CONSTRAINT [РЎРІРѕР№СЃС‚РІР°_fk2] FOREIGN KEY ([РџР°СЂР°РјРµС‚СЂС‹_Р”РѕРіРѕРІРѕСЂ]) REFERENCES sbyt.[Р”РѕРіРѕРІРѕСЂ]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Свойства] CHECK CONSTRAINT [Свойства_fk2]
+ALTER TABLE sbyt.[РЎРІРѕР№СЃС‚РІР°] CHECK CONSTRAINT [РЎРІРѕР№СЃС‚РІР°_fk2]
 GO
-ALTER TABLE sbyt.[Свойства] WITH CHECK ADD CONSTRAINT [Свойства_fk3] FOREIGN KEY ([Параметры_Организация]) REFERENCES sbyt.[Организации]([Row_id])
+ALTER TABLE sbyt.[РЎРІРѕР№СЃС‚РІР°] WITH CHECK ADD CONSTRAINT [РЎРІРѕР№СЃС‚РІР°_fk3] FOREIGN KEY ([РџР°СЂР°РјРµС‚СЂС‹_РћСЂРіР°РЅРёР·Р°С†РёСЏ]) REFERENCES sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Свойства] CHECK CONSTRAINT [Свойства_fk3]
-GO
-
-
-ALTER TABLE sbyt.[Лицевые_договора] WITH CHECK ADD CONSTRAINT [Лицевые_договора_fk0] FOREIGN KEY ([Договор_ИД]) REFERENCES sbyt.[Договор]([Row_ID])
-ON UPDATE NO ACTION
-ON DELETE NO ACTION
-GO
-ALTER TABLE sbyt.[Лицевые_договора] CHECK CONSTRAINT [Лицевые_договора_fk0]
-GO
-ALTER TABLE sbyt.[Лицевые_договора] WITH CHECK ADD CONSTRAINT [Лицевые_договора_fk1] FOREIGN KEY ([Лицевой_ИД]) REFERENCES sbyt.[Лицевые_счета]([Row_id])
-ON UPDATE NO ACTION
-ON DELETE NO ACTION
-GO
-ALTER TABLE sbyt.[Лицевые_договора] CHECK CONSTRAINT [Лицевые_договора_fk1]
+ALTER TABLE sbyt.[РЎРІРѕР№СЃС‚РІР°] CHECK CONSTRAINT [РЎРІРѕР№СЃС‚РІР°_fk3]
 GO
 
 
-ALTER TABLE sbyt.[Список_объектов] WITH CHECK ADD CONSTRAINT [Список_объектов_fk0] FOREIGN KEY ([Номенклатура_Объекты]) REFERENCES sbyt.[Номенклатура]([Row_id])
+ALTER TABLE sbyt.[Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°] WITH CHECK ADD CONSTRAINT [Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°_fk0] FOREIGN KEY ([Р”РѕРіРѕРІРѕСЂ_РР”]) REFERENCES sbyt.[Р”РѕРіРѕРІРѕСЂ]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Список_объектов] CHECK CONSTRAINT [Список_объектов_fk0]
+ALTER TABLE sbyt.[Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°] CHECK CONSTRAINT [Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°_fk0]
 GO
-ALTER TABLE sbyt.[Список_объектов] WITH CHECK ADD CONSTRAINT [Список_объектов_fk1] FOREIGN KEY ([Объекты_Счет]) REFERENCES sbyt.[Лицевые_счета]([Row_id])
+ALTER TABLE sbyt.[Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°] WITH CHECK ADD CONSTRAINT [Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°_fk1] FOREIGN KEY ([Р›РёС†РµРІРѕР№_РР”]) REFERENCES sbyt.[Р›РёС†РµРІС‹Рµ_СЃС‡РµС‚Р°]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Список_объектов] CHECK CONSTRAINT [Список_объектов_fk1]
+ALTER TABLE sbyt.[Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°] CHECK CONSTRAINT [Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°_fk1]
 GO
 
 
-ALTER TABLE sbyt.[Показания_счетчиков] WITH CHECK ADD CONSTRAINT [Показания_счетчиков_fk0] FOREIGN KEY ([Объект_Показание]) REFERENCES sbyt.[Список_объектов]([Row_id])
+ALTER TABLE sbyt.[РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ] WITH CHECK ADD CONSTRAINT [РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ_fk0] FOREIGN KEY ([РќРѕРјРµРЅРєР»Р°С‚СѓСЂР°_РћР±СЉРµРєС‚С‹]) REFERENCES sbyt.[РќРѕРјРµРЅРєР»Р°С‚СѓСЂР°]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Показания_счетчиков] CHECK CONSTRAINT [Показания_счетчиков_fk0]
+ALTER TABLE sbyt.[РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ] CHECK CONSTRAINT [РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ_fk0]
 GO
-ALTER TABLE sbyt.[Показания_счетчиков] WITH CHECK ADD CONSTRAINT [Показания_счетчиков_fk1] FOREIGN KEY ([Тип_ввода]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ] WITH CHECK ADD CONSTRAINT [РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ_fk1] FOREIGN KEY ([РћР±СЉРµРєС‚С‹_РЎС‡РµС‚]) REFERENCES sbyt.[Р›РёС†РµРІС‹Рµ_СЃС‡РµС‚Р°]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Показания_счетчиков] CHECK CONSTRAINT [Показания_счетчиков_fk1]
+ALTER TABLE sbyt.[РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ] CHECK CONSTRAINT [РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ_fk1]
+GO
+
+
+ALTER TABLE sbyt.[РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ] WITH CHECK ADD CONSTRAINT [РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ_fk0] FOREIGN KEY ([РћР±СЉРµРєС‚_РџРѕРєР°Р·Р°РЅРёРµ]) REFERENCES sbyt.[РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ]([Row_id])
+ON UPDATE NO ACTION
+ON DELETE NO ACTION
+GO
+ALTER TABLE sbyt.[РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ] CHECK CONSTRAINT [РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ_fk0]
+GO
+ALTER TABLE sbyt.[РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ] WITH CHECK ADD CONSTRAINT [РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ_fk1] FOREIGN KEY ([РўРёРї_РІРІРѕРґР°]) REFERENCES sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹]([Row_ID])
+ON UPDATE NO ACTION
+ON DELETE NO ACTION
+GO
+ALTER TABLE sbyt.[РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ] CHECK CONSTRAINT [РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ_fk1]
 GO
 
 /*
-ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk0] FOREIGN KEY ([Журнал_Счет]) REFERENCES sbyt.[Лицевые_счета]([Row_id])
+ALTER TABLE sbyt.[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№] WITH CHECK ADD CONSTRAINT [Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№_fk0] FOREIGN KEY ([Р–СѓСЂРЅР°Р»_РЎС‡РµС‚]) REFERENCES sbyt.[Р›РёС†РµРІС‹Рµ_СЃС‡РµС‚Р°]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Журнал_изменений] CHECK CONSTRAINT [Журнал_изменений_fk0]
+ALTER TABLE sbyt.[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№] CHECK CONSTRAINT [Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№_fk0]
 GO
 
-ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk1] FOREIGN KEY ([Журнал_Договор]) REFERENCES sbyt.[Договор]([Row_ID])
+ALTER TABLE sbyt.[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№] WITH CHECK ADD CONSTRAINT [Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№_fk1] FOREIGN KEY ([Р–СѓСЂРЅР°Р»_Р”РѕРіРѕРІРѕСЂ]) REFERENCES sbyt.[Р”РѕРіРѕРІРѕСЂ]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Журнал_изменений] CHECK CONSTRAINT [Журнал_изменений_fk1]
+ALTER TABLE sbyt.[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№] CHECK CONSTRAINT [Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№_fk1]
 GO
 
-ALTER TABLE sbyt.[Журнал_изменений] WITH CHECK ADD CONSTRAINT [Журнал_изменений_fk2] FOREIGN KEY ([Журнал_Пользователь]) REFERENCES sbyt.[Пользователи]([Row_id])
+ALTER TABLE sbyt.[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№] WITH CHECK ADD CONSTRAINT [Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№_fk2] FOREIGN KEY ([Р–СѓСЂРЅР°Р»_РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ]) REFERENCES sbyt.[РџРѕР»СЊР·РѕРІР°С‚РµР»Рё]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Журнал_изменений] CHECK CONSTRAINT [Журнал_изменений_fk2]
+ALTER TABLE sbyt.[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№] CHECK CONSTRAINT [Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№_fk2]
 GO
 */
 
-ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk0] FOREIGN KEY ([Папки]) REFERENCES sbyt.[Документ]([Row_id])
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] WITH CHECK ADD CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk0] FOREIGN KEY ([РџР°РїРєРё]) REFERENCES sbyt.[Р”РѕРєСѓРјРµРЅС‚]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk0]
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] CHECK CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk0]
 GO
-ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk1] FOREIGN KEY ([Тип_документа]) REFERENCES sbyt.[Классификаторы]([Row_ID])
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] WITH CHECK ADD CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk1] FOREIGN KEY ([РўРёРї_РґРѕРєСѓРјРµРЅС‚Р°]) REFERENCES sbyt.[РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹]([Row_ID])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk1]
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] CHECK CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk1]
 GO
-ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk2] FOREIGN KEY ([Плательщик_ИД]) REFERENCES sbyt.[Организации]([Row_id])
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] WITH CHECK ADD CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk2] FOREIGN KEY ([РџР»Р°С‚РµР»СЊС‰РёРє_РР”]) REFERENCES sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk2]
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] CHECK CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk2]
 GO
-ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk3] FOREIGN KEY ([Грузополучатель_ИД]) REFERENCES sbyt.[Организации]([Row_id])
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] WITH CHECK ADD CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk3] FOREIGN KEY ([Р“СЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЊ_РР”]) REFERENCES sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk3]
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] CHECK CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk3]
 GO
-ALTER TABLE sbyt.[Документ] WITH CHECK ADD CONSTRAINT [Документ_fk4] FOREIGN KEY ([Документ_Договор]) REFERENCES sbyt.[Договор]([Row_ID])
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] WITH CHECK ADD CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk4] FOREIGN KEY ([Р”РѕРєСѓРјРµРЅС‚_Р”РѕРіРѕРІРѕСЂ]) REFERENCES sbyt.[Р”РѕРіРѕРІРѕСЂ]([Row_ID])
 ON UPDATE CASCADE
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Документ] CHECK CONSTRAINT [Документ_fk4]
+ALTER TABLE sbyt.[Р”РѕРєСѓРјРµРЅС‚] CHECK CONSTRAINT [Р”РѕРєСѓРјРµРЅС‚_fk4]
 GO
 
-ALTER TABLE sbyt.[Строки_документа] WITH CHECK ADD CONSTRAINT [Строки_документа_fk0] FOREIGN KEY ([Строки_Документ]) REFERENCES sbyt.[Документ]([Row_id])
+ALTER TABLE sbyt.[РЎС‚СЂРѕРєРё_РґРѕРєСѓРјРµРЅС‚Р°] WITH CHECK ADD CONSTRAINT [РЎС‚СЂРѕРєРё_РґРѕРєСѓРјРµРЅС‚Р°_fk0] FOREIGN KEY ([РЎС‚СЂРѕРєРё_Р”РѕРєСѓРјРµРЅС‚]) REFERENCES sbyt.[Р”РѕРєСѓРјРµРЅС‚]([Row_id])
 ON UPDATE NO ACTION
 ON DELETE NO ACTION
 GO
-ALTER TABLE sbyt.[Строки_документа] CHECK CONSTRAINT [Строки_документа_fk0]
+ALTER TABLE sbyt.[РЎС‚СЂРѕРєРё_РґРѕРєСѓРјРµРЅС‚Р°] CHECK CONSTRAINT [РЎС‚СЂРѕРєРё_РґРѕРєСѓРјРµРЅС‚Р°_fk0]
 GO
 
---Добавление индексов 
---1. Добавление индексов (некластеризованных) на FK (FOREIGN KEY)
-CREATE NONCLUSTERED INDEX ind_Договор_Плательщик			ON sbyt.[Договор] (Плательщик_ИД);
-CREATE NONCLUSTERED INDEX ind_Договор_Грузополучатель		ON sbyt.[Договор] (Грузополучатель_ИД);
-CREATE NONCLUSTERED INDEX ind_Договор_Тип					ON sbyt.[Договор] (Тип_договора);
-CREATE NONCLUSTERED INDEX ind_Договор_Категория				ON sbyt.[Договор] (Категория_ИД);
-CREATE NONCLUSTERED INDEX ind_Договор_Отрасль				ON sbyt.[Договор] (Отрасль_ИД);
-CREATE NONCLUSTERED INDEX ind_Договор_Бюджет				ON sbyt.[Договор] (Бюджет_ИД);
+--Р”РѕР±Р°РІР»РµРЅРёРµ РёРЅРґРµРєСЃРѕРІ 
+--1. Р”РѕР±Р°РІР»РµРЅРёРµ РёРЅРґРµРєСЃРѕРІ (РЅРµРєР»Р°СЃС‚РµСЂРёР·РѕРІР°РЅРЅС‹С…) РЅР° FK (FOREIGN KEY)
+CREATE NONCLUSTERED INDEX ind_Р”РѕРіРѕРІРѕСЂ_РџР»Р°С‚РµР»СЊС‰РёРє			ON sbyt.[Р”РѕРіРѕРІРѕСЂ] (РџР»Р°С‚РµР»СЊС‰РёРє_РР”);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРіРѕРІРѕСЂ_Р“СЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЊ		ON sbyt.[Р”РѕРіРѕРІРѕСЂ] (Р“СЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЊ_РР”);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРіРѕРІРѕСЂ_РўРёРї					ON sbyt.[Р”РѕРіРѕРІРѕСЂ] (РўРёРї_РґРѕРіРѕРІРѕСЂР°);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРіРѕРІРѕСЂ_РљР°С‚РµРіРѕСЂРёСЏ				ON sbyt.[Р”РѕРіРѕРІРѕСЂ] (РљР°С‚РµРіРѕСЂРёСЏ_РР”);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРіРѕРІРѕСЂ_РћС‚СЂР°СЃР»СЊ				ON sbyt.[Р”РѕРіРѕРІРѕСЂ] (РћС‚СЂР°СЃР»СЊ_РР”);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРіРѕРІРѕСЂ_Р‘СЋРґР¶РµС‚				ON sbyt.[Р”РѕРіРѕРІРѕСЂ] (Р‘СЋРґР¶РµС‚_РР”);
 
-CREATE NONCLUSTERED INDEX ind_Классификаторы_Тип			ON sbyt.Классификаторы (Тип);
+CREATE NONCLUSTERED INDEX ind_РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹_РўРёРї			ON sbyt.РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹ (РўРёРї);
 
-CREATE NONCLUSTERED INDEX ind_Свойства_ВидыПараметры		ON sbyt.Свойства (Виды_Параметры);
-CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыСчет		ON sbyt.Свойства (Параметры_Счет);
-CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыДоговор		ON sbyt.Свойства (Параметры_Договор);
-CREATE NONCLUSTERED INDEX ind_Свойства_ПараметрыОрганизация	ON sbyt.Свойства (Параметры_Организация);
+CREATE NONCLUSTERED INDEX ind_РЎРІРѕР№СЃС‚РІР°_Р’РёРґС‹РџР°СЂР°РјРµС‚СЂС‹		ON sbyt.РЎРІРѕР№СЃС‚РІР° (Р’РёРґС‹_РџР°СЂР°РјРµС‚СЂС‹);
+CREATE NONCLUSTERED INDEX ind_РЎРІРѕР№СЃС‚РІР°_РџР°СЂР°РјРµС‚СЂС‹РЎС‡РµС‚		ON sbyt.РЎРІРѕР№СЃС‚РІР° (РџР°СЂР°РјРµС‚СЂС‹_РЎС‡РµС‚);
+CREATE NONCLUSTERED INDEX ind_РЎРІРѕР№СЃС‚РІР°_РџР°СЂР°РјРµС‚СЂС‹Р”РѕРіРѕРІРѕСЂ		ON sbyt.РЎРІРѕР№СЃС‚РІР° (РџР°СЂР°РјРµС‚СЂС‹_Р”РѕРіРѕРІРѕСЂ);
+CREATE NONCLUSTERED INDEX ind_РЎРІРѕР№СЃС‚РІР°_РџР°СЂР°РјРµС‚СЂС‹РћСЂРіР°РЅРёР·Р°С†РёСЏ	ON sbyt.РЎРІРѕР№СЃС‚РІР° (РџР°СЂР°РјРµС‚СЂС‹_РћСЂРіР°РЅРёР·Р°С†РёСЏ);
 
-CREATE NONCLUSTERED INDEX ind_ЛицевыеДоговора_Договор 		ON sbyt.Лицевые_договора (Договор_ИД);
-CREATE NONCLUSTERED INDEX ind_ЛицевыеДоговора_Лицевой 		ON sbyt.Лицевые_договора (Лицевой_ИД);
+CREATE NONCLUSTERED INDEX ind_Р›РёС†РµРІС‹РµР”РѕРіРѕРІРѕСЂР°_Р”РѕРіРѕРІРѕСЂ 		ON sbyt.Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР° (Р”РѕРіРѕРІРѕСЂ_РР”);
+CREATE NONCLUSTERED INDEX ind_Р›РёС†РµРІС‹РµР”РѕРіРѕРІРѕСЂР°_Р›РёС†РµРІРѕР№ 		ON sbyt.Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР° (Р›РёС†РµРІРѕР№_РР”);
 
-CREATE NONCLUSTERED INDEX ind_СписокОбъектов_Номенклатура	ON sbyt.Список_объектов (Номенклатура_Объекты);
-CREATE NONCLUSTERED INDEX ind_СписокОбъектов_Счет			ON sbyt.Список_объектов (Объекты_Счет);
+CREATE NONCLUSTERED INDEX ind_РЎРїРёСЃРѕРєРћР±СЉРµРєС‚РѕРІ_РќРѕРјРµРЅРєР»Р°С‚СѓСЂР°	ON sbyt.РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ (РќРѕРјРµРЅРєР»Р°С‚СѓСЂР°_РћР±СЉРµРєС‚С‹);
+CREATE NONCLUSTERED INDEX ind_РЎРїРёСЃРѕРєРћР±СЉРµРєС‚РѕРІ_РЎС‡РµС‚			ON sbyt.РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ (РћР±СЉРµРєС‚С‹_РЎС‡РµС‚);
 
-CREATE NONCLUSTERED INDEX ind_ПоказанияСчетчиков_Объект		ON sbyt.Показания_счетчиков (Объект_Показание);
-CREATE NONCLUSTERED INDEX ind_ПоказанияСчетчиков_Тип		ON sbyt.Показания_счетчиков (Тип_ввода);
+CREATE NONCLUSTERED INDEX ind_РџРѕРєР°Р·Р°РЅРёСЏРЎС‡РµС‚С‡РёРєРѕРІ_РћР±СЉРµРєС‚		ON sbyt.РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ (РћР±СЉРµРєС‚_РџРѕРєР°Р·Р°РЅРёРµ);
+CREATE NONCLUSTERED INDEX ind_РџРѕРєР°Р·Р°РЅРёСЏРЎС‡РµС‚С‡РёРєРѕРІ_РўРёРї		ON sbyt.РџРѕРєР°Р·Р°РЅРёСЏ_СЃС‡РµС‚С‡РёРєРѕРІ (РўРёРї_РІРІРѕРґР°);
 
-CREATE NONCLUSTERED INDEX ind_Журнал_Счет					ON sbyt.Журнал_изменений (Журнал_Счет);
-CREATE NONCLUSTERED INDEX ind_Журнал_Договор				ON sbyt.Журнал_изменений (Журнал_Договор);
-CREATE NONCLUSTERED INDEX ind_Журнал_Пользователь			ON sbyt.Журнал_изменений (Журнал_Пользователь);
+CREATE NONCLUSTERED INDEX ind_Р–СѓСЂРЅР°Р»_РЎС‡РµС‚					ON sbyt.Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№ (Р–СѓСЂРЅР°Р»_РЎС‡РµС‚);
+CREATE NONCLUSTERED INDEX ind_Р–СѓСЂРЅР°Р»_Р”РѕРіРѕРІРѕСЂ				ON sbyt.Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№ (Р–СѓСЂРЅР°Р»_Р”РѕРіРѕРІРѕСЂ);
+CREATE NONCLUSTERED INDEX ind_Р–СѓСЂРЅР°Р»_РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ			ON sbyt.Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№ (Р–СѓСЂРЅР°Р»_РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ);
 
-CREATE NONCLUSTERED INDEX ind_Документ_Тип					ON sbyt.Документ (Тип_документа);
-CREATE NONCLUSTERED INDEX ind_Документ_Плательщик			ON sbyt.Документ (Плательщик_ИД);
-CREATE NONCLUSTERED INDEX ind_Документ_Грузополучатель		ON sbyt.Документ (Грузополучатель_ИД);
-CREATE NONCLUSTERED INDEX ind_Документ_Договор				ON sbyt.Документ (Документ_Договор);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРєСѓРјРµРЅС‚_РўРёРї					ON sbyt.Р”РѕРєСѓРјРµРЅС‚ (РўРёРї_РґРѕРєСѓРјРµРЅС‚Р°);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРєСѓРјРµРЅС‚_РџР»Р°С‚РµР»СЊС‰РёРє			ON sbyt.Р”РѕРєСѓРјРµРЅС‚ (РџР»Р°С‚РµР»СЊС‰РёРє_РР”);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРєСѓРјРµРЅС‚_Р“СЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЊ		ON sbyt.Р”РѕРєСѓРјРµРЅС‚ (Р“СЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЊ_РР”);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРєСѓРјРµРЅС‚_Р”РѕРіРѕРІРѕСЂ				ON sbyt.Р”РѕРєСѓРјРµРЅС‚ (Р”РѕРєСѓРјРµРЅС‚_Р”РѕРіРѕРІРѕСЂ);
 
-CREATE NONCLUSTERED INDEX ind_СтрокиДокумента_Документ	ON sbyt.Строки_документа (Строки_Документ);
+CREATE NONCLUSTERED INDEX ind_РЎС‚СЂРѕРєРёР”РѕРєСѓРјРµРЅС‚Р°_Р”РѕРєСѓРјРµРЅС‚	ON sbyt.РЎС‚СЂРѕРєРё_РґРѕРєСѓРјРµРЅС‚Р° (РЎС‚СЂРѕРєРё_Р”РѕРєСѓРјРµРЅС‚);
 GO
 
---2. Добавление индексов на поле ПАПКИ таблиц, для объединения таблиц самих с собой при отображении древовидной структуры на форме приложения.
+--2. Р”РѕР±Р°РІР»РµРЅРёРµ РёРЅРґРµРєСЃРѕРІ РЅР° РїРѕР»Рµ РџРђРџРљР С‚Р°Р±Р»РёС†, РґР»СЏ РѕР±СЉРµРґРёРЅРµРЅРёСЏ С‚Р°Р±Р»РёС† СЃР°РјРёС… СЃ СЃРѕР±РѕР№ РїСЂРё РѕС‚РѕР±СЂР°Р¶РµРЅРёРё РґСЂРµРІРѕРІРёРґРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹ РЅР° С„РѕСЂРјРµ РїСЂРёР»РѕР¶РµРЅРёСЏ.
 
-CREATE NONCLUSTERED INDEX ind_Классификаторы_Папки			ON sbyt.Классификаторы (Папки);
-CREATE NONCLUSTERED INDEX ind_Типы_классификатора_Папки 	ON sbyt.[Типы_классификатора] (Папки);
-CREATE NONCLUSTERED INDEX ind_Документ_Папки				ON sbyt.Документ (Папки);
+CREATE NONCLUSTERED INDEX ind_РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹_РџР°РїРєРё			ON sbyt.РљР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂС‹ (РџР°РїРєРё);
+CREATE NONCLUSTERED INDEX ind_РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°_РџР°РїРєРё 	ON sbyt.[РўРёРїС‹_РєР»Р°СЃСЃРёС„РёРєР°С‚РѕСЂР°] (РџР°РїРєРё);
+CREATE NONCLUSTERED INDEX ind_Р”РѕРєСѓРјРµРЅС‚_РџР°РїРєРё				ON sbyt.Р”РѕРєСѓРјРµРЅС‚ (РџР°РїРєРё);
 GO
 
---3. Добавление индексов на таблицу Sbyt.[Организации] для быстрого поиска организации по ИНН или ОГРН
+--3. Р”РѕР±Р°РІР»РµРЅРёРµ РёРЅРґРµРєСЃРѕРІ РЅР° С‚Р°Р±Р»РёС†Сѓ Sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё] РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РїРѕРёСЃРєР° РѕСЂРіР°РЅРёР·Р°С†РёРё РїРѕ РРќРќ РёР»Рё РћР“Р Рќ
 
-CREATE NONCLUSTERED INDEX ind_Организации_ИНН ON Sbyt.[Организации] (ИНН);
-CREATE NONCLUSTERED INDEX ind_Организации_ОГРН ON Sbyt.[Организации] (ОГРН);
+CREATE NONCLUSTERED INDEX ind_РћСЂРіР°РЅРёР·Р°С†РёРё_РРќРќ ON Sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё] (РРќРќ);
+CREATE NONCLUSTERED INDEX ind_РћСЂРіР°РЅРёР·Р°С†РёРё_РћР“Р Рќ ON Sbyt.[РћСЂРіР°РЅРёР·Р°С†РёРё] (РћР“Р Рќ);
 GO
 
---4. Добавление индекса на таблицу Sbyt.Договор для быстрого поиска номеру договора
-CREATE NONCLUSTERED INDEX ind_Договор_Номер ON Sbyt.Договор (Номер);
+--4. Р”РѕР±Р°РІР»РµРЅРёРµ РёРЅРґРµРєСЃР° РЅР° С‚Р°Р±Р»РёС†Сѓ Sbyt.Р”РѕРіРѕРІРѕСЂ РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РїРѕРёСЃРєР° РЅРѕРјРµСЂСѓ РґРѕРіРѕРІРѕСЂР°
+CREATE NONCLUSTERED INDEX ind_Р”РѕРіРѕРІРѕСЂ_РќРѕРјРµСЂ ON Sbyt.Р”РѕРіРѕРІРѕСЂ (РќРѕРјРµСЂ);
 GO
 
---5. Добавление индекса на таблицу Sbyt.Лицевые_счета для быстрого поиска лицевого счета по его номеру
-CREATE NONCLUSTERED INDEX ind_Лицевые_счета_Номер ON Sbyt.Лицевые_счета (Номер);
+--5. Р”РѕР±Р°РІР»РµРЅРёРµ РёРЅРґРµРєСЃР° РЅР° С‚Р°Р±Р»РёС†Сѓ Sbyt.Р›РёС†РµРІС‹Рµ_СЃС‡РµС‚Р° РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РїРѕРёСЃРєР° Р»РёС†РµРІРѕРіРѕ СЃС‡РµС‚Р° РїРѕ РµРіРѕ РЅРѕРјРµСЂСѓ
+CREATE NONCLUSTERED INDEX ind_Р›РёС†РµРІС‹Рµ_СЃС‡РµС‚Р°_РќРѕРјРµСЂ ON Sbyt.Р›РёС†РµРІС‹Рµ_СЃС‡РµС‚Р° (РќРѕРјРµСЂ);
 GO
 
---6. Добавление индекса на таблицу Sbyt.Список_объектов для быстрого поиска прибора учета по его заводскому номеру
-CREATE NONCLUSTERED INDEX ind_Список_объектов_ЗаводскойНомер ON Sbyt.Список_объектов (Заводской_Номер);
+--6. Р”РѕР±Р°РІР»РµРЅРёРµ РёРЅРґРµРєСЃР° РЅР° С‚Р°Р±Р»РёС†Сѓ Sbyt.РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РїРѕРёСЃРєР° РїСЂРёР±РѕСЂР° СѓС‡РµС‚Р° РїРѕ РµРіРѕ Р·Р°РІРѕРґСЃРєРѕРјСѓ РЅРѕРјРµСЂСѓ
+CREATE NONCLUSTERED INDEX ind_РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ_Р—Р°РІРѕРґСЃРєРѕР№РќРѕРјРµСЂ ON Sbyt.РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ (Р—Р°РІРѕРґСЃРєРѕР№_РќРѕРјРµСЂ);
 GO
 
---7. Добавление индекса на таблицу Sbyt.Документ для быстрого поиска документа по его номеру (думаю пригодится для бухгалтерии)
-CREATE NONCLUSTERED INDEX ind_Документ_Номер ON Sbyt.Документ (Номер);
+--7. Р”РѕР±Р°РІР»РµРЅРёРµ РёРЅРґРµРєСЃР° РЅР° С‚Р°Р±Р»РёС†Сѓ Sbyt.Р”РѕРєСѓРјРµРЅС‚ РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РїРѕРёСЃРєР° РґРѕРєСѓРјРµРЅС‚Р° РїРѕ РµРіРѕ РЅРѕРјРµСЂСѓ (РґСѓРјР°СЋ РїСЂРёРіРѕРґРёС‚СЃСЏ РґР»СЏ Р±СѓС…РіР°Р»С‚РµСЂРёРё)
+CREATE NONCLUSTERED INDEX ind_Р”РѕРєСѓРјРµРЅС‚_РќРѕРјРµСЂ ON Sbyt.Р”РѕРєСѓРјРµРЅС‚ (РќРѕРјРµСЂ);
 GO
 
---8. Так же добавим составные индексы для выборки данных в зависимости от периода
+--8. РўР°Рє Р¶Рµ РґРѕР±Р°РІРёРј СЃРѕСЃС‚Р°РІРЅС‹Рµ РёРЅРґРµРєСЃС‹ РґР»СЏ РІС‹Р±РѕСЂРєРё РґР°РЅРЅС‹С… РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РїРµСЂРёРѕРґР°
 
-CREATE INDEX ind_Свойства_ДатНачДатКнц			ON Sbyt.Свойства(ДатНач, ДатКнц);
-CREATE INDEX ind_Список_объектов_ДатНачДатКнц	ON Sbyt.Список_объектов(ДатНач, ДатКнц);
-CREATE INDEX ind_Лицевые_договора_ДатНачДатКнц	ON Sbyt.Лицевые_договора(ДатНач, ДатКнц);
+CREATE INDEX ind_РЎРІРѕР№СЃС‚РІР°_Р”Р°С‚РќР°С‡Р”Р°С‚РљРЅС†			ON Sbyt.РЎРІРѕР№СЃС‚РІР°(Р”Р°С‚РќР°С‡, Р”Р°С‚РљРЅС†);
+CREATE INDEX ind_РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ_Р”Р°С‚РќР°С‡Р”Р°С‚РљРЅС†	ON Sbyt.РЎРїРёСЃРѕРє_РѕР±СЉРµРєС‚РѕРІ(Р”Р°С‚РќР°С‡, Р”Р°С‚РљРЅС†);
+CREATE INDEX ind_Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°_Р”Р°С‚РќР°С‡Р”Р°С‚РљРЅС†	ON Sbyt.Р›РёС†РµРІС‹Рµ_РґРѕРіРѕРІРѕСЂР°(Р”Р°С‚РќР°С‡, Р”Р°С‚РљРЅС†);
 GO

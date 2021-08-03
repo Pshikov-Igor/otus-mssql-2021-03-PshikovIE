@@ -1,31 +1,31 @@
-USE [Project_Sbyt]
+п»їUSE [Project_Sbyt]
 GO
 
 ------------------------------------------------------------------------------------------------------------------------
--- переводим БД в однопользователский режим
+-- РїРµСЂРµРІРѕРґРёРј Р‘Р” РІ РѕРґРЅРѕРїРѕР»СЊР·РѕРІР°С‚РµР»СЃРєРёР№ СЂРµР¶РёРј
 ALTER DATABASE Project_Sbyt SET SINGLE_USER WITH ROLLBACK IMMEDIATE
 
--- необходимо включить service broker
+-- РЅРµРѕР±С…РѕРґРёРјРѕ РІРєР»СЋС‡РёС‚СЊ service broker
 ALTER DATABASE Project_Sbyt SET ENABLE_BROKER;	
 
--- Разрешаем доверенные подключения
+-- Р Р°Р·СЂРµС€Р°РµРј РґРѕРІРµСЂРµРЅРЅС‹Рµ РїРѕРґРєР»СЋС‡РµРЅРёСЏ
 ALTER DATABASE Project_Sbyt SET TRUSTWORTHY ON; 
--- посмотрим свойства БД через студию
+-- РїРѕСЃРјРѕС‚СЂРёРј СЃРІРѕР№СЃС‚РІР° Р‘Р” С‡РµСЂРµР· СЃС‚СѓРґРёСЋ
 select DATABASEPROPERTYEX ('Project_Sbyt','UserAccess');
 SELECT is_broker_enabled FROM sys.databases WHERE name = 'Project_Sbyt';
 
--- Добавим авторизацию для sa, для доступа с других серверов
+-- Р”РѕР±Р°РІРёРј Р°РІС‚РѕСЂРёР·Р°С†РёСЋ РґР»СЏ sa, РґР»СЏ РґРѕСЃС‚СѓРїР° СЃ РґСЂСѓРіРёС… СЃРµСЂРІРµСЂРѕРІ
 ALTER AUTHORIZATION  
    ON DATABASE::Project_Sbyt TO [sa]; 
 
--- вернем режим БД 
+-- РІРµСЂРЅРµРј СЂРµР¶РёРј Р‘Р” 
 ALTER DATABASE Project_Sbyt SET MULTI_USER WITH ROLLBACK IMMEDIATE
 GO
 ------------------------------------------------------------------------------------------------------------------------
 
---Подготовим Service Brocker
+--РџРѕРґРіРѕС‚РѕРІРёРј Service Brocker
 
---Создадим сообщения
+--РЎРѕР·РґР°РґРёРј СЃРѕРѕР±С‰РµРЅРёСЏ
 CREATE MESSAGE TYPE
 [//Sbyt/SB/RequestMessage]
 VALIDATION=WELL_FORMED_XML;
@@ -36,7 +36,7 @@ VALIDATION=WELL_FORMED_XML;
 
 GO
 
---Создадим контракт
+--РЎРѕР·РґР°РґРёРј РєРѕРЅС‚СЂР°РєС‚
 CREATE CONTRACT [//Sbyt/SB/Contract]
       ([//Sbyt/SB/RequestMessage]
          SENT BY INITIATOR,
@@ -45,12 +45,12 @@ CREATE CONTRACT [//Sbyt/SB/Contract]
       );
 GO
 
---Создадим очереди
+--РЎРѕР·РґР°РґРёРј РѕС‡РµСЂРµРґРё
 CREATE QUEUE sbyt.TargetQueueSbyt;
 CREATE QUEUE sbyt.InitiatorQueueSbyt;
 GO
 
---Создадим сервис обслуживающий очередь
+--РЎРѕР·РґР°РґРёРј СЃРµСЂРІРёСЃ РѕР±СЃР»СѓР¶РёРІР°СЋС‰РёР№ РѕС‡РµСЂРµРґСЊ
 CREATE SERVICE [//Sbyt/SB/TargetService]
        ON QUEUE sbyt.TargetQueueSbyt
        ([//Sbyt/SB/Contract]);
@@ -63,7 +63,7 @@ GO
 
 ------------------------------------------------------------------------------------------------------------------------
 
---Создадим процедуру отправки запроса
+--РЎРѕР·РґР°РґРёРј РїСЂРѕС†РµРґСѓСЂСѓ РѕС‚РїСЂР°РІРєРё Р·Р°РїСЂРѕСЃР°
 
 CREATE or ALTER PROCEDURE sbyt.proc_write_journal_SB_SendMessage
    @user nvarchar(256),
@@ -80,9 +80,9 @@ BEGIN
 
 	--Sending a Request Message to the Target	
 	DECLARE @InitDlgHandle UNIQUEIDENTIFIER; --open init dialog
-	DECLARE @RequestMessage NVARCHAR(4000); --сообщение, которое будем отправлять
+	DECLARE @RequestMessage NVARCHAR(4000); --СЃРѕРѕР±С‰РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ Р±СѓРґРµРј РѕС‚РїСЂР°РІР»СЏС‚СЊ
 	
-	BEGIN TRAN --начинаем транзакцию
+	BEGIN TRAN --РЅР°С‡РёРЅР°РµРј С‚СЂР°РЅР·Р°РєС†РёСЋ
 
 	IF ( @curr_date is null )
 	SET @curr_date = current_timestamp;
@@ -97,9 +97,9 @@ BEGIN
 	SET @TableName = ''; 
 
    DECLARE @userID int;
-   Select @userID = Row_id from sbyt.Пользователи u Where u.Логин = @user;
+   Select @userID = Row_id from sbyt.РџРѕР»СЊР·РѕРІР°С‚РµР»Рё u Where u.Р›РѕРіРёРЅ = @user;
    IF ( @userID is null )
-	Select @userID = Row_id from sbyt.Пользователи u Where u.Логин = 'System';
+	Select @userID = Row_id from sbyt.РџРѕР»СЊР·РѕРІР°С‚РµР»Рё u Where u.Р›РѕРіРёРЅ = 'System';
 
 	--Prepare the Message  !!!auto generate XML
 	SELECT @RequestMessage = (SELECT @user		as UserName, 
@@ -134,15 +134,15 @@ GO
 
 ------------------------------------------------------------------------------------------------------------------------
 
---Создадим процедуру приемки запроса
+--РЎРѕР·РґР°РґРёРј РїСЂРѕС†РµРґСѓСЂСѓ РїСЂРёРµРјРєРё Р·Р°РїСЂРѕСЃР°
 CREATE or ALTER PROCEDURE sbyt.proc_write_journal_SB_GetMessage
 AS
 BEGIN
 
-	DECLARE @TargetDlgHandle UNIQUEIDENTIFIER, --идентификатор диалога
-			@Message NVARCHAR(4000),--полученное сообщение
-			@MessageType Sysname,--тип полученного сообщения
-			@ReplyMessage NVARCHAR(4000),--ответное сообщение
+	DECLARE @TargetDlgHandle UNIQUEIDENTIFIER, --РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РґРёР°Р»РѕРіР°
+			@Message NVARCHAR(4000),--РїРѕР»СѓС‡РµРЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ
+			@MessageType Sysname,--С‚РёРї РїРѕР»СѓС‡РµРЅРЅРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ
+			@ReplyMessage NVARCHAR(4000),--РѕС‚РІРµС‚РЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ
 			@xml XML; 
 
 	DECLARE	@user nvarchar(256),
@@ -163,13 +163,13 @@ BEGIN
 		@MessageType = Message_Type_Name
 	FROM sbyt.TargetQueueSbyt; 
 
-	--SELECT @Message; --выводим в консоль полученный месседж
+	--SELECT @Message; --РІС‹РІРѕРґРёРј РІ РєРѕРЅСЃРѕР»СЊ РїРѕР»СѓС‡РµРЅРЅС‹Р№ РјРµСЃСЃРµРґР¶
 
-	SET @xml = CAST(@Message AS XML); -- получаем xml из мессаджа
+	SET @xml = CAST(@Message AS XML); -- РїРѕР»СѓС‡Р°РµРј xml РёР· РјРµСЃСЃР°РґР¶Р°
 
 	--SELECT @xml; 
 
-	--получаем данные из xml
+	--РїРѕР»СѓС‡Р°РµРј РґР°РЅРЅС‹Рµ РёР· xml
 	SELECT @user		= Inf.Oper.value('@UserName'	,'nvarchar(256)'),
 	       @curr_date	= Inf.Oper.value('@curr_date'	,'datetime2'),
 		   @descr		= Inf.Oper.value('@descr'		,'nvarchar(1000)'),
@@ -181,20 +181,20 @@ BEGIN
 	FROM @xml.nodes('/RequestMessage/row') as Inf(Oper);
 
     DECLARE @userID int;
-    Select @userID = Row_id from sbyt.Пользователи u Where u.Логин = @user;
+    Select @userID = Row_id from sbyt.РџРѕР»СЊР·РѕРІР°С‚РµР»Рё u Where u.Р›РѕРіРёРЅ = @user;
     IF ( @userID is null )
-	 Select @userID = Row_id from sbyt.Пользователи u Where u.Логин = 'System';
+	 Select @userID = Row_id from sbyt.РџРѕР»СЊР·РѕРІР°С‚РµР»Рё u Where u.Р›РѕРіРёРЅ = 'System';
 	
-	--Вставим запись в нашу таблицу
-	IF (@descr is not null) -- Есть что записать
+	--Р’СЃС‚Р°РІРёРј Р·Р°РїРёСЃСЊ РІ РЅР°С€Сѓ С‚Р°Р±Р»РёС†Сѓ
+	IF (@descr is not null) -- Р•СЃС‚СЊ С‡С‚Рѕ Р·Р°РїРёСЃР°С‚СЊ
 	begin
-		INSERT INTO [Sbyt].[Журнал_изменений]
-		  (Дата,  Журнал_Пользователь,  Действие, Журнал_Счет, Журнал_Договор, Таблица, ИмяКомпьютера, Операция)
+		INSERT INTO [Sbyt].[Р–СѓСЂРЅР°Р»_РёР·РјРµРЅРµРЅРёР№]
+		  (Р”Р°С‚Р°,  Р–СѓСЂРЅР°Р»_РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ,  Р”РµР№СЃС‚РІРёРµ, Р–СѓСЂРЅР°Р»_РЎС‡РµС‚, Р–СѓСЂРЅР°Р»_Р”РѕРіРѕРІРѕСЂ, РўР°Р±Р»РёС†Р°, РРјСЏРљРѕРјРїСЊСЋС‚РµСЂР°, РћРїРµСЂР°С†РёСЏ)
 		VALUES
 		  ( @curr_date, @userID, ISNULL( @descr, '' ),  @account, @contract, @TableName, @hostname, @operation);
 	end;
 
-	--SELECT @Message AS ReceivedRequestMessage, @MessageType, @user, @curr_date, @descr, @account, @contract, @TableName, @hostname, @operation; --в лог
+	--SELECT @Message AS ReceivedRequestMessage, @MessageType, @user, @curr_date, @descr, @account, @contract, @TableName, @hostname, @operation; --РІ Р»РѕРі
 	
 	-- Confirm and Send a reply
 	IF @MessageType=N'//Sbyt/SB/RequestMessage'
@@ -205,10 +205,10 @@ BEGIN
 		MESSAGE TYPE
 		[//Sbyt/SB/ReplyMessage]
 		(@ReplyMessage);
-		END CONVERSATION @TargetDlgHandle;--закроем диалог со стороны таргета
+		END CONVERSATION @TargetDlgHandle;--Р·Р°РєСЂРѕРµРј РґРёР°Р»РѕРі СЃРѕ СЃС‚РѕСЂРѕРЅС‹ С‚Р°СЂРіРµС‚Р°
 	END 
 	
-	--SELECT @ReplyMessage AS SentReplyMessage; --в лог
+	--SELECT @ReplyMessage AS SentReplyMessage; --РІ Р»РѕРі
 	COMMIT TRAN;
 END;
 
@@ -216,33 +216,33 @@ GO
 
 ------------------------------------------------------------------------------------------------------------------------
 
---Создадим процедуру подтверждения запроса
+--РЎРѕР·РґР°РґРёРј РїСЂРѕС†РµРґСѓСЂСѓ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ Р·Р°РїСЂРѕСЃР°
 CREATE PROCEDURE sbyt.proc_write_journal_SB_ConfirmMessage
 AS
 BEGIN
 	--Receiving Reply Message from the Target.	
-	DECLARE @InitiatorReplyDlgHandle UNIQUEIDENTIFIER, --хэндл диалога
+	DECLARE @InitiatorReplyDlgHandle UNIQUEIDENTIFIER, --С…СЌРЅРґР» РґРёР°Р»РѕРіР°
 			@ReplyReceivedMessage NVARCHAR(1000) 
 	
 	BEGIN TRAN; 
 
-	    --получим сообщение из очереди инициатора
+	    --РїРѕР»СѓС‡РёРј СЃРѕРѕР±С‰РµРЅРёРµ РёР· РѕС‡РµСЂРµРґРё РёРЅРёС†РёР°С‚РѕСЂР°
 		RECEIVE TOP(1)
 			@InitiatorReplyDlgHandle=Conversation_Handle
 			,@ReplyReceivedMessage=Message_Body
 		FROM sbyt.InitiatorQueueSbyt; 
 		
-		END CONVERSATION @InitiatorReplyDlgHandle; --закроем диалог со стороны инициатора
-		--оба участника диалога должны завершить его
+		END CONVERSATION @InitiatorReplyDlgHandle; --Р·Р°РєСЂРѕРµРј РґРёР°Р»РѕРі СЃРѕ СЃС‚РѕСЂРѕРЅС‹ РёРЅРёС†РёР°С‚РѕСЂР°
+		--РѕР±Р° СѓС‡Р°СЃС‚РЅРёРєР° РґРёР°Р»РѕРіР° РґРѕР»Р¶РЅС‹ Р·Р°РІРµСЂС€РёС‚СЊ РµРіРѕ
 		--https://docs.microsoft.com/ru-ru/sql/t-sql/statements/end-conversation-transact-sql?view=sql-server-ver15
 		
-		SELECT @ReplyReceivedMessage AS ReceivedRepliedMessage; --в консоль
+		SELECT @ReplyReceivedMessage AS ReceivedRepliedMessage; --РІ РєРѕРЅСЃРѕР»СЊ
 
 	COMMIT TRAN; 
 END
 
 ------------------------------------------------------------------------------------------------------------------------
---Автоматизируем 
+--РђРІС‚РѕРјР°С‚РёР·РёСЂСѓРµРј 
 
 ALTER QUEUE sbyt.[InitiatorQueueSbyt] WITH STATUS = ON , RETENTION = OFF , POISON_MESSAGE_HANDLING (STATUS = OFF) 
 	, ACTIVATION (   STATUS = ON ,
