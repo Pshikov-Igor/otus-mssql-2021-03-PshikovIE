@@ -1,6 +1,10 @@
 ﻿-------------------
 --Посмотрим итоги--
 -------------------
+USE [Project_Sbyt]
+GO
+
+
 Declare @d date = getdate();
 
 --Посмотрим информацию по договору на текущий момент времени
@@ -204,3 +208,12 @@ ON ce.service_id = s.service_id
 LEFT JOIN sys.service_contracts sc
 ON ce.service_contract_id = sc.service_contract_id
 ORDER BY conversation_handle;
+
+/*
+--!проверим ручками, что все работает
+--Target
+EXEC sbyt.proc_write_journal_SB_GetMessage;
+
+--Initiator
+EXEC sbyt.proc_write_journal_SB_ConfirmMessage;
+*/
