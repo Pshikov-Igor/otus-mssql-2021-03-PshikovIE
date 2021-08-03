@@ -130,7 +130,8 @@ INSERT INTO [sbyt].[Классификаторы]
      VALUES
            (6,@kl,0,null,'Счет-фактура',''),
 		   (6,@kl,0,null,'Акт',''),
-		   (6,@kl,0,null,'Счет','')
+		   (6,@kl,0,null,'Счет',''),
+		   (6,@kl,0,null,'Приходный кассовый ордер','')
 GO
 
 ------------------
@@ -324,4 +325,62 @@ INSERT INTO [Sbyt].[Список_объектов]
      VALUES
            ('20210101',@nom,'123456789-07','123-987654',1,1,'20200801',@ls)
 GO
+
+----------------------------------------------------------
+--Занесем показания на прибор учета-----------------------
+----------------------------------------------------------
+
+Declare @pu bigint	= (Select top 1 pu.Row_ID from Sbyt.Список_объектов pu 
+					  where pu.Заводской_номер = '123456789-07'
+					       and (getdate() between pu.ДатНач and pu.ДатКнц) )
+
+Declare @tip int	= (Select top 1 k.Row_ID from sbyt.[Классификаторы] k Where k.Тип = 5 and k.Название = 'КП')
+
+INSERT INTO [Sbyt].[Показания_счетчиков]
+           ([Объект_Показание],[Тип_ввода],[Дата],[Расчетный_месяц],[Показание],[Расход],[Дополнительный_расход],[Итоговый_расход],[Тип])
+     VALUES
+           (@pu,@tip,
+		   dateadd (day, -day (getdate()) + 1, getdate()),
+		   dateadd (day, -day (getdate()) + 1, getdate())
+           ,1,0,0,0,1), -- Установочные показания
+		   (@pu,@tip,
+		   getdate(),
+		   dateadd (day, -day (getdate()) + 1, getdate())
+           ,150,149,10,159,1) -- Текущие показания
+
+GO
+
+-------------------------------------------------------------------
+--Выставим комплект документов + произведем оплату от потребителя--
+-------------------------------------------------------------------
+Declare @sf		int	= (Select top 1 k.Row_ID from sbyt.[Классификаторы] k Where k.Тип = 6 and k.Название = 'Счет-фактура');
+Declare @akt	int	= (Select top 1 k.Row_ID from sbyt.[Классификаторы] k Where k.Тип = 6 and k.Название = 'Акт');
+Declare @schet	int	= (Select top 1 k.Row_ID from sbyt.[Классификаторы] k Where k.Тип = 6 and k.Название = 'Счет');
+Declare @money	int	= (Select top 1 k.Row_ID from sbyt.[Классификаторы] k Where k.Тип = 6 and k.Название = 'Приходный кассовый ордер');
+
+Declare @dogID	int = (Select top 1 d.Row_ID from Sbyt.Договор d where d.Номер = '20210601\1');
+Declare @orgID  int	= (Select top 1 o.Row_ID from Sbyt.Организации o where o.ИНН = '1111111111' and o.КПП = '2222222222')
+
+INSERT INTO [Sbyt].[Документ]
+           ([Папки],[Папки_Add],[Тип_документа],[Номер],Дата,[Плательщик_ИД],[Грузополучатель_ИД],[Количество],[Сумма],[СуммаСНДС],[Наименование],[Документ_Договор])
+     VALUES
+           (null,0 --В корень папки
+           ,@sf,12345,getdate(), @orgID,@orgID,159,5000,6000
+           ,'Счет-Фактура за ' + cast(month(getdate()) as nvarchar(2)) + '.'+ cast(year(getdate()) as nvarchar(4))
+		   ,@dogID),
+		   (null,0,@akt,12345,getdate(),@orgID,@orgID,159,5000,6000
+           ,'Акт за ' + cast(month(getdate()) as nvarchar(2)) + '.'+ cast(year(getdate()) as nvarchar(4))
+		   ,@dogID),
+		   (null,0,@schet,12345,getdate(),@orgID,@orgID,159,5000,6000
+           ,'Счет за ' + cast(month(getdate()) as nvarchar(2)) + '.'+ cast(year(getdate()) as nvarchar(4))
+		   ,@dogID),
+		   ----Проведем оплату
+		   (null,0,@money,222,getdate(),@orgID,@orgID,null,null,6500
+           ,'Поступление денег за ' + cast(month(getdate()) as nvarchar(2)) + '.'+ cast(year(getdate()) as nvarchar(4))
+		   ,@dogID)
+GO
+
+
+
+
 
