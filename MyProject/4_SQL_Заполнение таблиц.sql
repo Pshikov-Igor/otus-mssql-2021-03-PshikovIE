@@ -380,7 +380,8 @@ INSERT INTO [Sbyt].[ƒокумент]
 		   ,@dogID)
 GO
 
-
+--проверим ручками, что все работает
+EXEC sbyt.proc_write_journal_SB_ConfirmMessage;
 
 
 
