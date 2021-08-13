@@ -6,13 +6,13 @@ CREATE DATABASE [Project_Sbyt]
  CONTAINMENT = NONE
  ON  PRIMARY 
 --( NAME = Sbyt, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt.mdf' , 
-( NAME = Sbyt, FILENAME = N'D:\Sbyt.mdf' , 
+( NAME = Sbyt, FILENAME = N'E:\Sbyt.mdf' , 
 	SIZE = 8MB , 
 	MAXSIZE = UNLIMITED, 
 	FILEGROWTH = 30MB )
  LOG ON 
 --( NAME = Sbyt_log, FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt_log.ldf' , 
-( NAME = Sbyt_log, FILENAME = N'd:\Sbyt_log.ldf' , 
+( NAME = Sbyt_log, FILENAME = N'E:\Sbyt_log.ldf' , 
 	SIZE = 8MB , 
 	MAXSIZE = UNLIMITED , 
 	FILEGROWTH = 30MB )
@@ -27,7 +27,7 @@ GO
 
 ALTER DATABASE [Project_Sbyt] ADD FILE 
 --( NAME = N'Sbyt_Journal', FILENAME = N'I:\Обучение\OTUS\Bases\Sbyt_Journal.ndf' , 
-( NAME = N'Sbyt_Journal', FILENAME = N'D:\Sbyt_Journal.ndf' , 
+( NAME = N'Sbyt_Journal', FILENAME = N'E:\Sbyt_Journal.ndf' , 
 SIZE = 8MB , FILEGROWTH = 100MB ) TO FILEGROUP [Sbyt_Journal]
 GO
 
