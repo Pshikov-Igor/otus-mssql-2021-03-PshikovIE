@@ -6,6 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+--Функции конвертации информации в текст
 CREATE OR ALTER FUNCTION sbyt.[atoa]( @str varchar(256) ) RETURNS nvarchar(1000)
 AS BEGIN
    RETURN coalesce( @str, 'NULL' );
@@ -34,7 +35,7 @@ END;
 
 GO
 
-
+--Функция проверки соответствият или равенства полей
 CREATE OR ALTER FUNCTION sbyt.[IsDistinct](@val1 SQL_VARIANT, @val2 SQL_VARIANT) 
 returns BIT 
 AS 
